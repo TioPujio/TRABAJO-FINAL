@@ -10,6 +10,9 @@ model Product {
   id         Int      @id @default(autoincrement())
   name       String
   pricePerKg Float
+  // price for the given unit (e.g. "kg", "unidad", "1lt", "paquete", "madeja", "100gr")
+  price      Float    @default(0)
+  unit       String   @default("kg")
   stock      Float
   imageUrl   String
   category   String

@@ -16,7 +16,7 @@ const createProductSchema = z.object({
 router.get("/", async (req, res) => {
   try {
     const products = await prisma.product.findMany({
-      distinct: ["name", "category", "pricePerKg", "imageUrl"],
+      distinct: ["name", "category", "pricePerKg", "price", "unit", "imageUrl"],
       orderBy: { createdAt: "asc" }
     });
     res.json(products);

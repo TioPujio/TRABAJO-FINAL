@@ -22,6 +22,44 @@ const CATEGORIES = [
   "SIN GLUTEN"
 ];
 
+function toTitleCase(value) {
+  const lowerWords = new Set(["de", "y", "con", "sin", "a", "en", "x"]);
+  const parts = String(value || "")
+    .trim()
+    .toLowerCase()
+    .split(" ")
+    .filter(Boolean);
+
+  return parts
+    .map((w, idx) => {
+      if (idx !== 0 && lowerWords.has(w)) return w;
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    })
+    .join(" ");
+}
+
+function formatUnit(unit) {
+  const u = String(unit || "kg").toLowerCase();
+  if (u === "1kg") return "kg";
+  if (u === "unidad") return "unidad";
+  if (u === "paquete") return "paquete";
+  if (u === "madeja") return "madeja";
+  if (u === "1lt" || u === "lt" || u === "l") return "lt";
+  if (u === "1m" || u === "m") return "m";
+  if (u === "100gr" || u === "100g") return "100gr";
+  return u;
+}
+
+function formatPrice(product) {
+  const unit = formatUnit(product.unit || "kg");
+  const price = Number(product.price);
+  if (Number.isFinite(price) && price > 0) {
+    return { value: price, unit };
+  }
+  const fallback = Number(product.pricePerKg);
+  return { value: Number.isFinite(fallback) ? fallback : 0, unit: "kg" };
+}
+
 export default function Home({ products }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("TODAS");
@@ -74,7 +112,7 @@ export default function Home({ products }) {
             className={`filter ${filter === cat ? "active" : ""}`}
             onClick={() => setFilter(cat)}
           >
-            {cat.toLowerCase()}
+            {toTitleCase(cat)}
           </button>
         ))}
       </div>
@@ -86,11 +124,16 @@ export default function Home({ products }) {
 
             <h3>{product.name}</h3>
 
-            <p className="price">
-              ${product.pricePerKg} <span>/kg</span>
-            </p>
+            {(() => {
+              const p = formatPrice(product);
+              return (
+                <p className="price">
+                  ${p.value} <span>/{p.unit}</span>
+                </p>
+              );
+            })()}
 
-            <p className="category">{product.category}</p>
+            <p className="category">{toTitleCase(product.category)}</p>
 
             <button className="consult" onClick={() => consultarProducto(product)}>
               Consultar
