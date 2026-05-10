@@ -1,7 +1,9 @@
 {
   "version": 2,
   "routes": [
-    { "src": "/products/(.*)", "dest": "/public/products/$1" },
-    { "src": "/(.*)", "dest": "/api/index.js" }
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.js"
+    }
   ]
 }
