@@ -120,7 +120,11 @@ export default function Home({ products }) {
       <div className="products-grid">
         {filteredProducts.map((product) => (
           <div key={product.id} className="card">
-            <img src={`${API_URL}${product.imageUrl}`} alt={product.name} loading="lazy" />
+            {product.imageUrl ? (
+              <img src={`${API_URL}${product.imageUrl}`} alt={product.name} loading="lazy" />
+            ) : (
+              <div className="img-placeholder" aria-hidden="true" />
+            )}
 
             <h3>{product.name}</h3>
 

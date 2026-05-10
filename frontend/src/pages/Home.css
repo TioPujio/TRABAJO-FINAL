@@ -93,6 +93,15 @@
   object-fit: contain;
 }
 
+.img-placeholder {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(47, 93, 59, 0.10), rgba(47, 93, 59, 0.04));
+  border: 1px dashed rgba(47, 93, 59, 0.25);
+}
+
 .card h3 {
   margin: 10px 0 5px;
   text-transform: capitalize;
