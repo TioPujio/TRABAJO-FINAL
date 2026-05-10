@@ -1,6 +1,8 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import chatRoutes from "./routes/chat.js";
 import prisma from "./prisma.js";
 import productRoutes from "./routes/products.js";
@@ -8,6 +10,8 @@ import productRoutes from "./routes/products.js";
 dotenv.config();
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(
   cors({
@@ -81,7 +85,7 @@ app.use(express.json());
 // http://localhost:3000/products/almendras.jpg
 app.use(
   "/products",
-  express.static("public/products", {
+  express.static(path.join(__dirname, "..", "public", "products"), {
     index: false,
     redirect: false
   })
