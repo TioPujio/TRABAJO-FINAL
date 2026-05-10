@@ -12,27 +12,50 @@ const app = express();
 app.use(
   cors({
     origin: (origin, cb) => {
-      const allowList = (process.env.CORS_ORIGIN || "http://localhost:5173")
+      const rawAllowList = (process.env.CORS_ORIGIN || "http://localhost:5173")
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
 
       if (!origin) return cb(null, true);
-      if (allowList.includes(origin)) return cb(null, true);
+      const normalizedOrigin = origin.replace(/\/$/, "");
+
+      // Allow all origins if explicitly configured.
+      if (rawAllowList.includes("*")) return cb(null, true);
+
+      // Exact matches (normalize trailing slash)
+      const exactAllowList = rawAllowList
+        .filter((entry) => entry !== "*" && !entry.includes("*"))
+        .map((entry) => entry.replace(/\/$/, ""));
+      if (exactAllowList.includes(normalizedOrigin)) return cb(null, true);
 
       // Support wildcard entries like "*.vercel.app"
       try {
-        const { host } = new URL(origin);
-        const wildcardMatch = allowList.some((entry) => {
-          if (!entry.startsWith("*.")) return false;
-          const suffix = entry.slice(1); // ".vercel.app"
+        const { host } = new URL(normalizedOrigin);
+        const wildcardMatch = rawAllowList.some((entry) => {
+          if (!entry.includes("*")) return false;
+
+          // Accept "*.vercel.app" or "https://*.vercel.app"
+          let wildcardHost = entry;
+          if (wildcardHost.startsWith("http://") || wildcardHost.startsWith("https://")) {
+            try {
+              wildcardHost = new URL(wildcardHost).host;
+            } catch {
+              return false;
+            }
+          }
+
+          if (!wildcardHost.startsWith("*.")) return false;
+          const suffix = wildcardHost.slice(1); // ".vercel.app"
           return host.endsWith(suffix);
         });
         if (wildcardMatch) return cb(null, true);
       } catch {
         // ignore URL parsing failures
       }
-      return cb(new Error(`CORS blocked for origin: ${origin}`));
+
+      // Don't throw: returning `false` avoids a confusing 500 response.
+      return cb(null, false);
     }
   })
 );
