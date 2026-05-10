@@ -1,46 +1,43 @@
 import "./Home.css";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { API_URL } from "../services/api";
 import ChatWidget from "../components/ChatWidget";
+import logo from "../assets/logo.svg";
 
 export default function Home({ products }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("todos");
   const [chatInput, setChatInput] = useState("");
 
-  const consultarProducto = (p) => {
-    setChatInput(`Quiero comprar ${p.name}`);
+  const consultarProducto = (product) => {
+    setChatInput(`Quiero comprar ${product.name}`);
   };
 
-  const handleChat = async (message) => {
-    try {
-      const res = await fetch("http://localhost:3000/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message })
-      });
-
-      const data = await res.json();
-
-      console.log("FER:", data.reply);
-    } catch (err) {
-      console.error(err);
+  const dedupedProducts = useMemo(() => {
+    const seen = new Set();
+    const out = [];
+    for (const product of products) {
+      const key = `${product.name}|${product.category}|${product.pricePerKg}|${product.imageUrl}`.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(product);
     }
-  };
+    return out;
+  }, [products]);
 
-  const filteredProducts = products.filter((p) => {
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filter === "todos" || p.category === filter;
+  const filteredProducts = dedupedProducts.filter((product) => {
+    const matchSearch = product.name.toLowerCase().includes(search.toLowerCase());
+    const matchFilter = filter === "todos" || product.category === filter;
     return matchSearch && matchFilter;
   });
 
   return (
     <div className="container">
-      {/* HEADER */}
       <div className="header">
-        <h1>El Viejo Almacén Todo Suelto</h1>
+        <div className="brand">
+          <img className="brand-logo" src={logo} alt="" aria-hidden="true" />
+          <h1>El Viejo Almacén Todo Suelto</h1>
+        </div>
 
         <input
           className="search"
@@ -51,7 +48,6 @@ export default function Home({ products }) {
         />
       </div>
 
-      {/* FILTROS */}
       <div className="filters">
         {["todos", "frutos secos", "semillas", "harinas", "legumbres", "especias"].map((cat) => (
           <button
@@ -64,21 +60,22 @@ export default function Home({ products }) {
         ))}
       </div>
 
-      {/* GRID */}
       <div className="products-grid">
-        {filteredProducts.map((p) => (
-          <div key={p.id} className="card">
-            <img src={`${API_URL}${p.imageUrl}`} alt={p.name} />
+        {filteredProducts.map((product) => (
+          <div key={product.id} className="card">
+            <img src={`${API_URL}${product.imageUrl}`} alt={product.name} loading="lazy" />
 
-            <h3>{p.name}</h3>
+            <h3>{product.name}</h3>
 
             <p className="price">
-              ${p.pricePerKg} <span>/kg</span>
+              ${product.pricePerKg} <span>/kg</span>
             </p>
 
-            <p className="category">{p.category}</p>
+            <p className="category">{product.category}</p>
 
-            <button onClick={() => consultarProducto(p)}>Consultar</button>
+            <button className="consult" onClick={() => consultarProducto(product)}>
+              Consultar
+            </button>
           </div>
         ))}
       </div>

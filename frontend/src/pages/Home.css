@@ -1,6 +1,7 @@
 .container {
   max-width: 1200px;
   margin: auto;
+  padding-bottom: 96px;
 }
 
 /* HEADER */
@@ -9,10 +10,26 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
+  gap: 16px;
 }
 
 .header h1 {
   font-size: 28px;
+  margin: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  color: #2f5d3b;
+  flex: 0 0 auto;
 }
 
 .search {
@@ -44,7 +61,7 @@
 }
 
 .filter.active {
-  background: black;
+  background: #2f5d3b;
   color: white;
 }
 
@@ -94,5 +111,23 @@
 .category {
   font-size: 12px;
   color: gray;
+}
+
+.consult {
+  margin-top: 10px;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: #2f5d3b;
+  color: white;
+  font-weight: 600;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.consult:hover {
+  background: #254a30;
+  transform: translateY(-1px);
 }
 

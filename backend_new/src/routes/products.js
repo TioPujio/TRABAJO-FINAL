@@ -15,7 +15,10 @@ const createProductSchema = z.object({
 // GET productos
 router.get("/", async (req, res) => {
   try {
-    const products = await prisma.product.findMany();
+    const products = await prisma.product.findMany({
+      distinct: ["name", "category", "pricePerKg", "imageUrl"],
+      orderBy: { createdAt: "asc" }
+    });
     res.json(products);
   } catch (err) {
     console.error("GET /products failed:", err);
