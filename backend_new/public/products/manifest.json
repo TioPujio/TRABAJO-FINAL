@@ -1,0 +1,457 @@
+﻿[
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Almendra.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\almendra.jpg",
+        "url":  "/products/almendra.jpg",
+        "sha256":  "362021BA22EDA63DC040F4201B1EDF92FF75C1A398BCCE06249922C649C9B9A7",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\AlmidonM.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\almidonm.webp",
+        "url":  "/products/almidonm.webp",
+        "sha256":  "3369B0AD6CA31A76CE8E024F52CC50DD2FB1769F4531BC56E1E8A5E457288CDB",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Almohaditas.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\almohaditas.jpg",
+        "url":  "/products/almohaditas.jpg",
+        "sha256":  "A1ADB19970B7A1563DFAEC93723F53D856CE920D90CA67EABC1F8920229CE2F0",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\AnisEstr.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\anisestr.jpg",
+        "url":  "/products/anisestr.jpg",
+        "sha256":  "F5DDFE43173B99427D1CEC35202394A01A1C017A6B6E2F89089F6037C458FAAE",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\ArrozInfla.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\arrozinfla.webp",
+        "url":  "/products/arrozinfla.webp",
+        "sha256":  "602D1A5A12EE342AC7077C0BB1E9998D09CCAAE770BFF18C186A26ADAE22F982",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Avellana.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\avellana.jpg",
+        "url":  "/products/avellana.jpg",
+        "sha256":  "7CF631A482E86755697CBBEB7F7E7BB830BEE392045DF42028EE25978D58707E",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\CafeColom.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\cafecolom.jpg",
+        "url":  "/products/cafecolom.jpg",
+        "sha256":  "8953CBADC5FC9AB810CD05BF17BED9753E8FF89D14DC8C079FBB8F58E8DCA171",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\CafeSanto.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\cafesanto.jpg",
+        "url":  "/products/cafesanto.jpg",
+        "sha256":  "02F6EE1C324E4CD456E5FF64D00D6E39056F60F9629761024B487256705C3D28",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\CafeVerde.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\cafeverde.jpg",
+        "url":  "/products/cafeverde.jpg",
+        "sha256":  "BA46A76CB1C342D8C99D33A744B783AD3BA66C447B532EADA0544D80C8C10620",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\castañas.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\castanas.jpg",
+        "url":  "/products/castanas.jpg",
+        "sha256":  "D6F5215ED3EB2D306BC0D662E09C7531C61F8A4EB0AD3135ECC0436B128D10E4",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\chia.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\chia.jpg",
+        "url":  "/products/chia.jpg",
+        "sha256":  "DD9C35A1E17E759BFD4F1C2F22AB7BF64915B367602AB832A7EEC39F07200229",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\ClavoOlor.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\clavoolor.jpg",
+        "url":  "/products/clavoolor.jpg",
+        "sha256":  "5053578C26BD15DCB6B5673D5C194730017EE6706DC615597583FD791AECA71E",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\CoposSA.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\copossa.webp",
+        "url":  "/products/copossa.webp",
+        "sha256":  "C1C4CF072F6D3C97D06049E1EB21275CA0D22012F83705BA3B931DCD71AAB233",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\curcuma.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\curcuma.jpg",
+        "url":  "/products/curcuma.jpg",
+        "sha256":  "6786920B4609312130E4C0C15B4127B6E21905A2C67A87369789DE7A41315F3A",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\FecuMandioca.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\fecumandioca.webp",
+        "url":  "/products/fecumandioca.webp",
+        "sha256":  "EF483F05BB041CE148993CC3A16EEEDFCDB6CFC4C04E5DCD6FCCCCE308D6E38F",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Garbanzo.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\garbanzo.jpg",
+        "url":  "/products/garbanzo.jpg",
+        "sha256":  "61352623540DA2023D1F6BB2C1B97AF918CF8CE87B293B46172E56006BD1E3DE",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\GirasolCC.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\girasolcc.jpg",
+        "url":  "/products/girasolcc.jpg",
+        "sha256":  "1E7B69BF14F38142FC6F821275E9ED5C3C9EC842DB31B4B0FDD1012C55285C38",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\GirasolPela.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\girasolpela.jpg",
+        "url":  "/products/girasolpela.jpg",
+        "sha256":  "91B134544572EAAE21F88E63CDB4924EFC34B711A274069B2A3B71299D85947F",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\GranolaEnerg.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\granolaenerg.jpg",
+        "url":  "/products/granolaenerg.jpg",
+        "sha256":  "BD2EC959A5D862588702596BF58AC11DB37516275D60C8C99EBE96B2E70317A6",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\HAlmendraCasc.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\halmendracasc.webp",
+        "url":  "/products/halmendracasc.webp",
+        "sha256":  "06337FAB402F799D59469746F73227FAAA4281D3A236335C93737CE30D1C7B64",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\HArrozInt.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\harrozint.webp",
+        "url":  "/products/harrozint.webp",
+        "sha256":  "91589AD95693A95A404965BBEFB3D2A3D26AF9833CDA2F9070ACF88C1F86C35E",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Havena.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\havena.jpg",
+        "url":  "/products/havena.jpg",
+        "sha256":  "B2AD80D189DBA594066DCF716D4D4D894834F591A6CB2267D6B3D20E3C3095DD",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\HCoco.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\hcoco.jpg",
+        "url":  "/products/hcoco.jpg",
+        "sha256":  "AC9CB0C6CEC726D97ACE4EB8114BF5090E68E300729EA5B2F4B139E2FE294510",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\HongoPino.jpeg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\hongopino.jpeg",
+        "url":  "/products/hongopino.jpeg",
+        "sha256":  "51C80C230B244EF02B72D2ACB15AF7328EFDCB5365FC24D011E579EFA39ACDF9",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\HTrigoSarra.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\htrigosarra.webp",
+        "url":  "/products/htrigosarra.webp",
+        "sha256":  "85D2F5178877F188434758FFBEA696B34581D9E99749ABA59CF43EE5633BA558",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Lino.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\lino.jpg",
+        "url":  "/products/lino.jpg",
+        "sha256":  "1E1439CBB2FB27A3A69D7A7BAECB2F229A3AD531EAEF2611C6E3C85D27CAF9FF",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Lturcas.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\lturcas.jpg",
+        "url":  "/products/lturcas.jpg",
+        "sha256":  "21A62C4B2469A299D5553496B83C8CA2784B5C80FD153BE99A21BDA049DCC653",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\ManiPeladoCS.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\manipeladocs.jpg",
+        "url":  "/products/manipeladocs.jpg",
+        "sha256":  "D6FCD38962B75F3F117A88447F533772C4E415D7CC286CC1BB89455D073D8301",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\ManiPeladoSS.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\manipeladocs.jpg",
+        "url":  "/products/manipeladocs.jpg",
+        "sha256":  "D6FCD38962B75F3F117A88447F533772C4E415D7CC286CC1BB89455D073D8301",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Merken.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\merken.jpg",
+        "url":  "/products/merken.jpg",
+        "sha256":  "12CB7408C125CDDE8D219807E7CE06890660FE058A224096FC6F3FB17A971309",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Mijo.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\mijo.jpg",
+        "url":  "/products/mijo.jpg",
+        "sha256":  "7B1171492D55620760F0AF3C952C5944083075DF1BF24BBD1DA15C3A86930892",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\MixCerealSAzu.png",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\mixcerealsazu.png",
+        "url":  "/products/mixcerealsazu.png",
+        "sha256":  "EBC198E7D5A384208B8A3210747F7913674D79E2DC3CDBF4442ACB0F12528EC1",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\MixFrutoCP.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\mixfrutocp.jpg",
+        "url":  "/products/mixfrutocp.jpg",
+        "sha256":  "5F34837D6D9AF5E742E4899605CF185453088BBB953B81B403BABB49EABC42C4",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\MixFrutoSalado.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\mixfrutosalado.webp",
+        "url":  "/products/mixfrutosalado.webp",
+        "sha256":  "578DB0FBE1256721035E4FC0E1292558996C54214B4C801A8E914DD7B8CF700B",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\MixFrutoSP.png",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\mixfrutosp.png",
+        "url":  "/products/mixfrutosp.png",
+        "sha256":  "A05B71CA6D55AA5E43CB00F0D0F7CDA7FE9ED1339F7164498BE044D83EE84056",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\MixFrutoTropi.png",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\mixfrutotropi.png",
+        "url":  "/products/mixfrutotropi.png",
+        "sha256":  "299EA1202B42C7CBAEC9C94639B2381DA333471FFEA2EA031080DB1D9170220C",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\MixPimienta.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\mixpimienta.jpg",
+        "url":  "/products/mixpimienta.jpg",
+        "sha256":  "C5AEAC3C0F1F5E627481AC869CD6CFC46489A7EB18883A6420C5B8906B3E57FA",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Nmariposa.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\nmariposa.jpg",
+        "url":  "/products/nmariposa.jpg",
+        "sha256":  "0B58323D1D4778E5B7E4F9826B799059D16BFF883677F4AB92095D80301A72D6",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\NuezCC.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\nuezcc.jpg",
+        "url":  "/products/nuezcc.jpg",
+        "sha256":  "B6E38274289445A440D3394C5A84CAFBB2678C1788CCAB11932DF8C89E26A793",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Oregano.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\oregano.jpg",
+        "url":  "/products/oregano.jpg",
+        "sha256":  "B4A8625BA7D19DFB14D22CF677AA2FD0A6B37C55D417EB957363CA31E5036EC1",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PBlanca.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\pblanca.webp",
+        "url":  "/products/pblanca.webp",
+        "sha256":  "B9578303AC06D738D2749D6C99D4D79C294E1D7901BC8FC99A9E0AC0A364031D",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PBlancaM.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\pblancam.jpg",
+        "url":  "/products/pblancam.jpg",
+        "sha256":  "64E4ED53FB7290D35D6C0176803696A4AC85ACC0BFFE37E4546E2724155CBB47",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PimentonD.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\pimentond.jpg",
+        "url":  "/products/pimentond.jpg",
+        "sha256":  "BDB94EC12D12C5354CF8C6B2CAFBF55186D03F97ECC4B12180D7CB3E19C5F3EE",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PistachoCasc.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\pistachocasc.webp",
+        "url":  "/products/pistachocasc.webp",
+        "sha256":  "3E79C5705047EB26E9A124DA6C8321C4714AC28621367D3373FC8F6A760F38EE",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Pistachos.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\pistachos.webp",
+        "url":  "/products/pistachos.webp",
+        "sha256":  "2AD4877207A04B57FA73E14725939F41B91A6414243A6A423F06E5749A10FBC3",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PNegra.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\pnegra.jpg",
+        "url":  "/products/pnegra.jpg",
+        "sha256":  "EADC8659A0FBE40BDA379AC7B503E0FC7404315D08F27B63AF485DEEF5C5AA7F",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PNegraM.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\pnegram.webp",
+        "url":  "/products/pnegram.webp",
+        "sha256":  "04BC0615D35DD6C4204E26C705FD869332BAC02BAC70755D9AC6C551F728E698",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosAduki.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotosaduki.jpg",
+        "url":  "/products/porotosaduki.jpg",
+        "sha256":  "B47B071D485EFFB9552442AF2ED44E31F442E093984F4062A17F62B504DC9573",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosAlubia.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotosalubia.webp",
+        "url":  "/products/porotosalubia.webp",
+        "sha256":  "CDEEAF35A24E59E1C7103BEB7723761C434F86A6B880860A2F998C7C8E424698",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosColo.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotoscolo.jpg",
+        "url":  "/products/porotoscolo.jpg",
+        "sha256":  "8BF33AF9D291F723D4C2A5A432D4E9812E9C0BAFAB99AA26306A0925613C88DC",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosLupine.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotoslupine.jpg",
+        "url":  "/products/porotoslupine.jpg",
+        "sha256":  "54BF48B113BD1BDCF30F2F7FE355F4CA9DEB07A1358C02F821B4886573357540",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosMung.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotosmung.jpg",
+        "url":  "/products/porotosmung.jpg",
+        "sha256":  "69B4163B51EC423F10A6CC097804E8F3B8590EBB38BB0646B5427AD3E7D4D2FE",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosNeg.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotosneg.jpg",
+        "url":  "/products/porotosneg.jpg",
+        "sha256":  "22FC2C9137DF2FBAB26C676F0ACECA9BC0F5D6D2E4DDD669D83BE2954A6B7366",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosPallare.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotospallare.jpg",
+        "url":  "/products/porotospallare.jpg",
+        "sha256":  "9EE3C36BDDCB68E6DDB412E739490DAFDB5CF9EAE96856FB9972F32EF4DF4A45",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosRegi.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotosregi.webp",
+        "url":  "/products/porotosregi.webp",
+        "sha256":  "6703E5738EB7202CC41A286A7EAA071BDEB0D427F9AD2BAA015050E91878ED75",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosSoja.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotossoja.webp",
+        "url":  "/products/porotossoja.webp",
+        "sha256":  "256308F37D710407FD944760BFFAB3AC250B17F3DA983930B3E205AC93C71FCB",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\PorotosTape.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\porotostape.webp",
+        "url":  "/products/porotostape.webp",
+        "sha256":  "F5C32E901ECE4453B21303786E022D41AC2632FC3D03E561C07CB594204AFC36",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Provenzal.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\provenzal.jpg",
+        "url":  "/products/provenzal.jpg",
+        "sha256":  "103E3608B85A5CBB06143AB580F5DD41D1EA09D7889E251787A5841F4027CC99",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Quinoa.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\quinoa.jpg",
+        "url":  "/products/quinoa.jpg",
+        "sha256":  "17EA150D13719229DD39B609ABAA17DAE957623AC1577FB5532338F0FB5A56AA",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\QuinoaPop.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\quinoapop.jpg",
+        "url":  "/products/quinoapop.jpg",
+        "sha256":  "4208066B5FC8F97AB21364D658BDC2C10FCC4BE785DB2A8306C320CB78D2A89C",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\SesamoBla.png",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\sesamobla.png",
+        "url":  "/products/sesamobla.png",
+        "sha256":  "FE268A43E75B9D51469833F61D916D6AAE2CEFCF49222D4CFB4412397D32A2D1",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\SesamoInt.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\sesamoint.jpg",
+        "url":  "/products/sesamoint.jpg",
+        "sha256":  "17A81BB3F1D57BE10F1C61B9312D0A392A2A0739226B663FAAC46DFD130E8093",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\SesamoNeg.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\sesamoneg.webp",
+        "url":  "/products/sesamoneg.webp",
+        "sha256":  "D4B7E0159510EEF9C012EF6A57251506597605680D0BF3509474F8A1435D98DD",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\TomateSeco.webp",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\tomateseco.webp",
+        "url":  "/products/tomateseco.webp",
+        "sha256":  "117D9AE53F17D45E9E53831640EF949DD5BE7AD21FC02458D06835F94CB5AAD0",
+        "deduped":  true
+    },
+    {
+        "source":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\PROYECTOFINALIA\\IMG_PRODUCT\\Zapallo.jpg",
+        "dest":  "C:\\Users\\joaqu\\OneDrive\\Desktop\\CursoDeIA\\imagenes proyecto\\backend_new\\public\\\\products\\zapallo.jpg",
+        "url":  "/products/zapallo.jpg",
+        "sha256":  "21E4D199CC1CAA91BF94496FE6B38FB90903F9335FC2055AD89CA96ED8FF2F1D",
+        "deduped":  true
+    }
+]
