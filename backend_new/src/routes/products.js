@@ -17,7 +17,8 @@ router.get("/", async (req, res) => {
   try {
     const products = await prisma.product.findMany();
     res.json(products);
-  } catch {
+  } catch (err) {
+    console.error("GET /products failed:", err);
     res.status(500).json({ error: "Failed to fetch products" });
   }
 });
@@ -36,7 +37,8 @@ router.post("/", async (req, res) => {
     });
 
     res.status(201).json(product);
-  } catch {
+  } catch (err) {
+    console.error("POST /products failed:", err);
     res.status(500).json({ error: "Failed to create product" });
   }
 });
