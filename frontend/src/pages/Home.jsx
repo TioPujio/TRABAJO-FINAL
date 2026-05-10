@@ -4,9 +4,27 @@ import { API_URL } from "../services/api";
 import ChatWidget from "../components/ChatWidget";
 import logo from "../assets/logo.svg";
 
+const CATEGORIES = [
+  "TODAS",
+  "FRUTOS SECOS",
+  "CONDIMENTOS",
+  "CHACINADOS",
+  "HARINAS",
+  "LEGUMBRES",
+  "SEMILLAS",
+  "ARTICULOS DE LIMPIEZA",
+  "REPOSTERIA",
+  "CEREALES",
+  "GRANOS",
+  "COPETIN",
+  "EMBASADOS",
+  "SIN TACC",
+  "SIN GLUTEN"
+];
+
 export default function Home({ products }) {
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("todos");
+  const [filter, setFilter] = useState("TODAS");
   const [chatInput, setChatInput] = useState("");
 
   const consultarProducto = (product) => {
@@ -27,7 +45,8 @@ export default function Home({ products }) {
 
   const filteredProducts = dedupedProducts.filter((product) => {
     const matchSearch = product.name.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filter === "todos" || product.category === filter;
+    const productCategory = String(product.category || "").toUpperCase();
+    const matchFilter = filter === "TODAS" || productCategory === filter;
     return matchSearch && matchFilter;
   });
 
@@ -49,13 +68,13 @@ export default function Home({ products }) {
       </div>
 
       <div className="filters">
-        {["todos", "frutos secos", "semillas", "harinas", "legumbres", "especias"].map((cat) => (
+        {CATEGORIES.map((cat) => (
           <button
             key={cat}
             className={`filter ${filter === cat ? "active" : ""}`}
             onClick={() => setFilter(cat)}
           >
-            {cat}
+            {cat.toLowerCase()}
           </button>
         ))}
       </div>

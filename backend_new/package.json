@@ -8,6 +8,7 @@
     "dev": "node src/server.js",
     "postinstall": "prisma generate",
     "seed": "node prisma/seed.js",
+    "catalog:import": "node scripts/catalog/import-products.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
