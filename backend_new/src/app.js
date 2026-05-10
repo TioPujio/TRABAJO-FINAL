@@ -23,11 +23,26 @@ app.use(
       // Allow all origins if explicitly configured.
       if (rawAllowList.includes("*")) return cb(null, true);
 
+      let originHost = "";
+      try {
+        originHost = new URL(normalizedOrigin).host;
+      } catch {
+        originHost = "";
+      }
+
       // Exact matches (normalize trailing slash)
       const exactAllowList = rawAllowList
         .filter((entry) => entry !== "*" && !entry.includes("*"))
         .map((entry) => entry.replace(/\/$/, ""));
       if (exactAllowList.includes(normalizedOrigin)) return cb(null, true);
+
+      // Host-only matches: allow specifying just "example.com" (or "example.com:1234")
+      if (originHost) {
+        const hostAllowList = exactAllowList
+          .filter((entry) => !entry.startsWith("http://") && !entry.startsWith("https://"))
+          .map((entry) => entry.replace(/\/$/, ""));
+        if (hostAllowList.includes(originHost)) return cb(null, true);
+      }
 
       // Support wildcard entries like "*.vercel.app"
       try {
