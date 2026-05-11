@@ -22,6 +22,8 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
     transferred: false
   });
   const [receiptFileName, setReceiptFileName] = useState("");
+  const [quickGrams, setQuickGrams] = useState("");
+  const [quickKg, setQuickKg] = useState("");
 
   const [messages, setMessages] = useState([
     { from: "fer", text: "Hola, soy FER. ¿Qué estás buscando hoy?" }
@@ -158,6 +160,22 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
     };
     setOrder((o) => ({ ...o, items: [...(o.items || []), item] }));
     setMessages((prev) => [...prev, { from: "user", text: `Agregá ${grams}g de ${suggestProduct.name}` }]);
+  };
+
+  const addSuggestedFromInputs = () => {
+    if (!suggestProduct?.id || orderConfirmed) return;
+    const kg = Number(String(quickKg).replace(",", "."));
+    const grams = Number(String(quickGrams).replace(",", "."));
+
+    let finalGrams = 0;
+    if (Number.isFinite(kg) && kg > 0) finalGrams = Math.round(kg * 1000);
+    else if (Number.isFinite(grams) && grams > 0) finalGrams = Math.round(grams);
+
+    if (finalGrams <= 0) return;
+
+    addSuggestedToOrder(finalGrams);
+    setQuickGrams("");
+    setQuickKg("");
   };
 
   const buildWhatsAppText = (finalOrderId) => {
@@ -324,17 +342,33 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
 
           {suggestProduct && !orderConfirmed && (
             <div className="chat-suggest">
-              <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(250)}>
-                250g
-              </button>
-              <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(500)}>
-                500g
-              </button>
-              <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(750)}>
-                750g
-              </button>
-              <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(1000)}>
-                1kg
+              <div className="chat-suggest-fields">
+                <label>
+                  Gramos
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    placeholder="Ej: 250"
+                    value={quickGrams}
+                    onChange={(e) => setQuickGrams(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Kilos
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    inputMode="decimal"
+                    placeholder="Ej: 0,5"
+                    value={quickKg}
+                    onChange={(e) => setQuickKg(e.target.value)}
+                  />
+                </label>
+              </div>
+              <button type="button" className="chat-suggest-add" onClick={addSuggestedFromInputs}>
+                Agregar
               </button>
             </div>
           )}

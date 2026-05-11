@@ -176,22 +176,47 @@
   padding: 10px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   background: #ffffff;
-  flex-wrap: wrap;
+  align-items: flex-end;
 }
 
-.chat-suggest-btn {
-  flex: 1 1 70px;
+.chat-suggest-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  flex: 1;
+}
+
+.chat-suggest label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.chat-suggest input {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  outline: none;
+}
+
+.chat-suggest input:focus {
+  border-color: #2f5d3b;
+}
+
+.chat-suggest-add {
   border: 0;
   border-radius: 12px;
   padding: 10px 12px;
-  background: rgba(47, 93, 59, 0.10);
+  background: #2f5d3b;
+  color: white;
   cursor: pointer;
-  font-weight: 700;
-  color: #1f3d28;
+  font-weight: 800;
 }
 
-.chat-suggest-btn:hover {
-  background: rgba(47, 93, 59, 0.16);
+.chat-suggest-add:hover {
+  background: #254a30;
 }
 
 .chat-actions {
@@ -300,6 +325,15 @@
     left: 14px;
     width: auto;
     bottom: 74px;
+  }
+
+  .chat-suggest {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chat-suggest-fields {
+    grid-template-columns: 1fr 1fr;
   }
 
   .chat-body {
