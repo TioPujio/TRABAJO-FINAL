@@ -362,64 +362,68 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
             </button>
           </div>
 
-          {suggestProduct && !orderConfirmed && (
-            <div className="chat-suggest">
-              <div className="chat-suggest-fields">
-                <label>
-                  Gramos
-                  <input
-                    type="number"
-                    min="0"
-                    inputMode="numeric"
-                    placeholder="Ej: 250"
-                    value={quickGrams}
-                    onChange={(e) => setQuickGrams(e.target.value)}
-                  />
-                </label>
-                <label>
-                  Kilos
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    inputMode="decimal"
-                    placeholder="Ej: 0,5"
-                    value={quickKg}
-                    onChange={(e) => setQuickKg(e.target.value)}
-                  />
-                </label>
-                <div className="chat-suggest-total" aria-live="polite">
-                  Total aprox: <b>${formatARS(suggestedTotal)}</b>
-                  {suggestedGrams > 0 ? <span> ({suggestedGrams}g)</span> : null}
+          <div className="chat-bottom">
+            {suggestProduct && !orderConfirmed && (
+              <div className="chat-suggest">
+                <div className="chat-suggest-fields">
+                  <label>
+                    Gramos
+                    <input
+                      type="number"
+                      min="0"
+                      inputMode="numeric"
+                      placeholder="Ej: 250"
+                      value={quickGrams}
+                      onChange={(e) => setQuickGrams(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Kilos
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      inputMode="decimal"
+                      placeholder="Ej: 0,5"
+                      value={quickKg}
+                      onChange={(e) => setQuickKg(e.target.value)}
+                    />
+                  </label>
+                  <div className="chat-suggest-total" aria-live="polite">
+                    Total aprox: <b>${formatARS(suggestedTotal)}</b>
+                    {suggestedGrams > 0 ? <span> ({suggestedGrams}g)</span> : null}
+                  </div>
                 </div>
+                <button type="button" className="chat-suggest-add" onClick={addSuggestedFromInputs}>
+                  Agregar
+                </button>
               </div>
-              <button type="button" className="chat-suggest-add" onClick={addSuggestedFromInputs}>
-                Agregar
-              </button>
-            </div>
-          )}
+            )}
 
-          {order.items?.length > 0 && (
             <div className="chat-orderbar">
               <button
                 type="button"
                 className="chat-orderbar-btn"
                 onClick={() => setOrderPanelOpen((v) => !v)}
               >
-                {orderPanelOpen ? "Ocultar mi pedido" : "Ver mi pedido"} ({order.items.length})
+                {orderPanelOpen ? "Ocultar mi pedido" : "Ver mi pedido"} ({order.items?.length || 0})
               </button>
               <div className="chat-orderbar-total">
                 Total: $
-                {Number(order.total).toLocaleString("es-AR", {
+                {Number(order.total || 0).toLocaleString("es-AR", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
                 })}
               </div>
             </div>
-          )}
 
-          {order.items?.length > 0 && orderPanelOpen && (
-            <div className="chat-actions">
+            {orderPanelOpen && (
+              <div className="chat-actions">
+              {(!order.items || order.items.length === 0) && (
+                <div className="chat-order-empty">
+                  TodavÃ­a no agregaste productos al pedido. UsÃ¡ "Consultar" en un producto o pedime algo por acÃ¡.
+                </div>
+              )}
               <div className="chat-order-editor">
                 {(order.items || []).map((it, idx) => (
                   <div key={`${it.name}-${idx}`} className="chat-line">
@@ -583,8 +587,9 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
               {orderConfirmed && !customerComplete && (
                 <div className="chat-order-hint">Completá tus datos para poder enviar el pedido.</div>
               )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>

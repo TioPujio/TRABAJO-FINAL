@@ -36,6 +36,7 @@
   font-family: system-ui, -apple-system, Segoe UI, sans-serif;
   display: flex;
   flex-direction: column;
+  max-height: calc(100vh - 140px);
 }
 
 .chat-topbar {
@@ -80,6 +81,7 @@
   padding: 12px;
   background: #f7f4ed;
   flex: 1 1 auto;
+  min-height: 160px;
 }
 
 .msg {
@@ -182,7 +184,7 @@
 
 .chat-suggest-fields {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
   flex: 1;
 }
@@ -210,6 +212,8 @@
 }
 
 .chat-suggest input {
+  width: 100%;
+  box-sizing: border-box;
   padding: 10px;
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.12);
@@ -244,6 +248,15 @@
   max-height: 280px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+.chat-order-empty {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.7);
+  background: rgba(47, 93, 59, 0.06);
+  border: 1px dashed rgba(47, 93, 59, 0.18);
+  padding: 10px 12px;
+  border-radius: 12px;
 }
 
 .chat-form {
@@ -340,6 +353,7 @@
     left: 14px;
     width: auto;
     bottom: 74px;
+    max-height: calc(100vh - 110px);
   }
 
   .chat-suggest {
@@ -348,11 +362,12 @@
   }
 
   .chat-suggest-fields {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .chat-body {
     height: 240px;
+    min-height: 140px;
   }
 
   .chat-actions {
