@@ -49,6 +49,10 @@
   font-size: 14px;
 }
 
+.order-total-mid {
+  display: none;
+}
+
 .order-id {
   margin-left: 6px;
   color: rgba(0, 0, 0, 0.55);
@@ -238,6 +242,19 @@
 
   .order-total {
     text-align: left;
+  }
+
+  .order-total-top {
+    display: none;
+  }
+
+  .order-total-mid {
+    display: block;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 12px;
+    margin: 12px 0 6px;
   }
 
   .order-form-row {

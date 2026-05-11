@@ -128,7 +128,7 @@ export default function OrderPage() {
           ← Volver al catálogo
         </button>
         <h2>Mi pedido</h2>
-        <div className="order-total">
+        <div className="order-total order-total-top">
           Total aprox: <b>${totalText}</b>
           {orderId ? <span className="order-id"> #{orderId}</span> : null}
         </div>
@@ -205,6 +205,11 @@ export default function OrderPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="order-total order-total-mid" aria-live="polite">
+                Total aprox: <b>${totalText}</b>
+                {orderId ? <span className="order-id"> #{orderId}</span> : null}
               </div>
 
               <div className="order-form">
