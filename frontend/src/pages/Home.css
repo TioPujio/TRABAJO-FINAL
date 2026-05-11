@@ -68,6 +68,7 @@
   border-radius: 12px;
   overflow: visible;
   background: #ffffff;
+  position: relative;
 }
 
 .category-menu {
@@ -98,10 +99,11 @@
 
 .category-dropdown {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: calc(100% + 2px);
-  width: 260px;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  width: min(92vw, 520px);
+  margin: 0 auto;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.10);
   border-radius: 12px;
@@ -199,8 +201,6 @@
   }
 
   .category-dropdown {
-    left: 50%;
-    transform: translateX(-50%);
     width: min(92vw, 320px);
   }
 

@@ -135,25 +135,6 @@ export default function Home({ products }) {
                   ▾
                 </span>
               </button>
-
-              {catOpen && (
-                <div className="category-dropdown" role="menu">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      type="button"
-                      key={cat}
-                      role="menuitem"
-                      className={`category-item ${filter === cat ? "active" : ""}`}
-                      onClick={() => {
-                        setFilter(cat);
-                        setCatOpen(false);
-                      }}
-                    >
-                      {toTitleCase(cat)}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
 
             <input
@@ -163,6 +144,25 @@ export default function Home({ products }) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+
+            {catOpen && (
+              <div className="category-dropdown" role="menu">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    type="button"
+                    key={cat}
+                    role="menuitem"
+                    className={`category-item ${filter === cat ? "active" : ""}`}
+                    onClick={() => {
+                      setFilter(cat);
+                      setCatOpen(false);
+                    }}
+                  >
+                    {toTitleCase(cat)}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
