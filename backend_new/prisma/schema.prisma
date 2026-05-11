@@ -17,4 +17,39 @@ model Product {
   imageUrl   String
   category   String
   createdAt  DateTime @default(now())
+
+  orderItems OrderItem[]
+}
+
+model Order {
+  id           Int         @id @default(autoincrement())
+  customerName String
+  customerPhone String
+  pickupTime   String
+  transferred  Boolean     @default(false)
+  total        Float       @default(0)
+  status       String      @default("pending")
+  createdAt    DateTime    @default(now())
+
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int?
+
+  name      String
+  grams     Int?
+  unit      String?
+  quantity  Int?
+  total     Float    @default(0)
+
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product? @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
 }

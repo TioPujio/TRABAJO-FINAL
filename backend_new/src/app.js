@@ -4,6 +4,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import chatRoutes from "./routes/chat.js";
+import ordersRoutes from "./routes/orders.js";
 import prisma from "./prisma.js";
 import productRoutes from "./routes/products.js";
 
@@ -115,6 +116,7 @@ app.get("/.well-known/appspecific/com.chrome.devtools.json", (_req, res) => {
 });
 
 app.use("/products", productRoutes);
+app.use("/orders", ordersRoutes);
 app.use("/chat", chatRoutes);
 
 app.use((err, _req, res, _next) => {

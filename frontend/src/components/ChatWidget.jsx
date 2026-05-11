@@ -2,10 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import "./ChatWidget.css";
 import { API_URL } from "../services/api";
 
+const WHATSAPP_NUMBER = "5492994221315";
+
 export default function ChatWidget({ presetMessage }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [orderId, setOrderId] = useState(null);
+
   const [order, setOrder] = useState({ items: [], total: 0 });
   const [customer, setCustomer] = useState({
     name: "",
@@ -14,6 +19,7 @@ export default function ChatWidget({ presetMessage }) {
     transferred: false
   });
   const [receiptFileName, setReceiptFileName] = useState("");
+
   const [messages, setMessages] = useState([
     { from: "fer", text: "Hola, soy FER. ¿Qué estás buscando hoy?" }
   ]);
@@ -34,17 +40,23 @@ export default function ChatWidget({ presetMessage }) {
     el.scrollTop = el.scrollHeight;
   }, [open, messages.length, loading]);
 
-  const buildWhatsAppText = () => {
+  const customerComplete =
+    customer.name.trim().length > 0 &&
+    customer.phone.trim().length > 0 &&
+    customer.pickupTime.trim().length > 0;
+
+  const buildWhatsAppText = (finalOrderId) => {
     const lines = [];
 
     lines.push("Hola! Quiero hacer este pedido:\n");
+    if (finalOrderId) lines.push(`Pedido #${finalOrderId}\n`);
 
     lines.push("Pedido:");
     for (const item of order.items || []) {
       const name = item.name || "Producto";
 
       let qty = "";
-      if (item.grams) {
+      if (typeof item.grams === "number") {
         qty = `${item.grams}g`;
       } else {
         const unit = String(item.unit || "").toLowerCase();
@@ -71,14 +83,73 @@ export default function ChatWidget({ presetMessage }) {
     lines.push(`Teléfono: ${customer.phone.trim()}`);
     lines.push(`Retiro: ${customer.pickupTime.trim()}`);
     lines.push(`Pago: ${customer.transferred ? "Transferencia (adjunto comprobante)" : "Al retirar"}`);
+    if (customer.transferred) {
+      lines.push(receiptFileName ? `Comprobante: ${receiptFileName}` : "Comprobante: (adjunto en WhatsApp)");
+    }
 
     lines.push("\n¿Me lo preparan para retirar?");
 
     return lines.join("\n");
   };
 
-  const whatsappUrl =
-    order.items?.length > 0 ? `https://wa.me/5492994221315?text=${encodeURIComponent(buildWhatsAppText())}` : "";
+  const previewTotals = async (items) => {
+    const res = await fetch(`${API_URL}/orders/preview`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items })
+    });
+    return res.json();
+  };
+
+  const refreshOrderTotals = async () => {
+    try {
+      const priced = await previewTotals(order.items || []);
+      if (priced?.items) setOrder(priced);
+    } catch {
+      // ignore
+    }
+  };
+
+  const clearOrder = () => {
+    setOrder({ items: [], total: 0 });
+    setOrderId(null);
+  };
+
+  const createOrder = async () => {
+    const res = await fetch(`${API_URL}/orders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer: {
+          name: customer.name.trim(),
+          phone: customer.phone.trim(),
+          pickupTime: customer.pickupTime.trim(),
+          transferred: customer.transferred
+        },
+        items: order.items || []
+      })
+    });
+    if (!res.ok) throw new Error("failed");
+    return res.json();
+  };
+
+  const sendToWhatsApp = async () => {
+    if (!customerComplete || creating || !order.items?.length) return;
+    setCreating(true);
+    try {
+      const created = await createOrder();
+      setOrderId(created.id);
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsAppText(created.id))}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { from: "fer", text: "No pude generar el pedido. Intentá de nuevo en unos segundos." }
+      ]);
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -103,11 +174,6 @@ export default function ChatWidget({ presetMessage }) {
       setLoading(false);
     }
   };
-
-  const customerComplete =
-    customer.name.trim().length > 0 &&
-    customer.phone.trim().length > 0 &&
-    customer.pickupTime.trim().length > 0;
 
   return (
     <>
@@ -212,22 +278,83 @@ export default function ChatWidget({ presetMessage }) {
                 </div>
               </div>
 
+              <div className="chat-order-editor">
+                {(order.items || []).map((it, idx) => (
+                  <div key={`${it.name}-${idx}`} className="chat-line">
+                    <div className="chat-line-title">{it.name}</div>
+                    <div className="chat-line-controls">
+                      {typeof it.grams === "number" ? (
+                        <input
+                          type="number"
+                          min="1"
+                          value={it.grams}
+                          onChange={(e) => {
+                            const grams = Number(e.target.value);
+                            setOrder((o) => {
+                              const items = [...(o.items || [])];
+                              items[idx] = { ...items[idx], grams: Number.isFinite(grams) ? grams : items[idx].grams };
+                              return { ...o, items };
+                            });
+                          }}
+                          aria-label={`Gramos de ${it.name}`}
+                        />
+                      ) : (
+                        <input
+                          type="number"
+                          min="1"
+                          value={it.quantity ?? 1}
+                          onChange={(e) => {
+                            const quantity = Number(e.target.value);
+                            setOrder((o) => {
+                              const items = [...(o.items || [])];
+                              items[idx] = {
+                                ...items[idx],
+                                quantity: Number.isFinite(quantity) ? quantity : items[idx].quantity
+                              };
+                              return { ...o, items };
+                            });
+                          }}
+                          aria-label={`Cantidad de ${it.name}`}
+                        />
+                      )}
+                      <button
+                        type="button"
+                        className="chat-line-remove"
+                        onClick={() => {
+                          setOrder((o) => ({ ...o, items: (o.items || []).filter((_, i) => i !== idx) }));
+                        }}
+                      >
+                        Quitar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="chat-editor-actions">
+                  <button type="button" className="chat-secondary" onClick={refreshOrderTotals}>
+                    Actualizar totales
+                  </button>
+                  <button type="button" className="chat-secondary" onClick={clearOrder}>
+                    Vaciar pedido
+                  </button>
+                </div>
+              </div>
+
               <div className="chat-order-hint">
                 Pedido: {order.items.length} item{order.items.length === 1 ? "" : "s"} • Total aprox: $
                 {order.total.toLocaleString("es-AR")}
+                {orderId ? ` • #${orderId}` : ""}
               </div>
-              <a
-                className={`chat-whatsapp ${customerComplete ? "" : "disabled"}`}
-                href={customerComplete ? whatsappUrl : undefined}
-                onClick={(e) => {
-                  if (!customerComplete) e.preventDefault();
-                }}
-                target="_blank"
-                rel="noreferrer"
-                aria-disabled={!customerComplete}
+
+              <button
+                type="button"
+                className={`chat-whatsapp ${customerComplete && !creating ? "" : "disabled"}`}
+                onClick={sendToWhatsApp}
+                disabled={!customerComplete || creating}
               >
-                Enviar por WhatsApp
-              </a>
+                {creating ? "Generando…" : "Enviar por WhatsApp"}
+              </button>
+
               {!customerComplete && (
                 <div className="chat-order-hint">Completá tus datos para poder enviar el pedido.</div>
               )}
@@ -238,3 +365,4 @@ export default function ChatWidget({ presetMessage }) {
     </>
   );
 }
+
