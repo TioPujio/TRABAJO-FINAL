@@ -130,7 +130,12 @@ export default function Home({ products }) {
 
         <div className="header-controls below">
           <div className="search-group">
-            <div className="category-menu" ref={catRef} onMouseEnter={() => setCatOpen(true)}>
+            <div
+              className="category-menu"
+              ref={catRef}
+              onMouseEnter={() => setCatOpen(true)}
+              onMouseLeave={() => setCatOpen(false)}
+            >
               <button
                 type="button"
                 className="category-button"
