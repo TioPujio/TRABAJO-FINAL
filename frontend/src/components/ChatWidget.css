@@ -137,3 +137,31 @@
   cursor: default;
 }
 
+.chat-actions {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-order-hint {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.chat-whatsapp {
+  text-decoration: none;
+  background: #2f5d3b;
+  color: white;
+  text-align: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.chat-whatsapp:hover {
+  background: #254a30;
+}
+

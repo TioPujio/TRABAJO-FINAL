@@ -6,6 +6,8 @@ export default function ChatWidget({ presetMessage }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [order, setOrder] = useState({ items: [], total: 0 });
+  const [whatsappUrl, setWhatsappUrl] = useState("");
   const [messages, setMessages] = useState([
     { from: "fer", text: "Hola, soy FER. ¿Qué estás buscando hoy?" }
   ]);
@@ -24,7 +26,7 @@ export default function ChatWidget({ presetMessage }) {
     const el = bodyRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [open, messages.length]);
+  }, [open, messages.length, loading]);
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -38,9 +40,11 @@ export default function ChatWidget({ presetMessage }) {
       const res = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: messageToSend })
+        body: JSON.stringify({ message: messageToSend, order })
       });
       const data = await res.json();
+      if (data.order) setOrder(data.order);
+      if (data.whatsappUrl) setWhatsappUrl(data.whatsappUrl);
       setMessages((prev) => [...prev, { from: "fer", text: data.reply || "OK" }]);
     } catch {
       setMessages((prev) => [...prev, { from: "fer", text: "No pude conectar. Intentá de nuevo." }]);
@@ -95,6 +99,18 @@ export default function ChatWidget({ presetMessage }) {
               enviar
             </button>
           </div>
+
+          {order.items?.length > 0 && whatsappUrl && (
+            <div className="chat-actions">
+              <div className="chat-order-hint">
+                Pedido: {order.items.length} item{order.items.length === 1 ? "" : "s"} • Total aprox: $
+                {order.total.toLocaleString("es-AR")}
+              </div>
+              <a className="chat-whatsapp" href={whatsappUrl} target="_blank" rel="noreferrer">
+                Enviar por WhatsApp
+              </a>
+            </div>
+          )}
         </div>
       )}
     </>
