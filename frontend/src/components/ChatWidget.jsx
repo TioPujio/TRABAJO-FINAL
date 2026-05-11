@@ -9,6 +9,7 @@ export default function ChatWidget({ presetMessage }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [orderId, setOrderId] = useState(null);
 
   const [order, setOrder] = useState({ items: [], total: 0 });
@@ -39,6 +40,48 @@ export default function ChatWidget({ presetMessage }) {
     if (!el) return;
     el.scrollTop = el.scrollHeight;
   }, [open, messages.length, loading]);
+
+  // Auto-update totals with a small debounce when quantities change.
+  const debounceRef = useRef(null);
+  const lastSentRef = useRef("");
+
+  useEffect(() => {
+    if (!open) return;
+    if (!order.items?.length) return;
+
+    const signature = JSON.stringify(
+      (order.items || []).map((it) => ({
+        productId: it.productId,
+        name: it.name,
+        grams: it.grams,
+        unit: it.unit,
+        quantity: it.quantity
+      }))
+    );
+
+    if (signature === lastSentRef.current) return;
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      setRefreshing(true);
+      try {
+        const priced = await previewTotals(order.items || []);
+        if (priced?.items) {
+          lastSentRef.current = signature;
+          setOrder(priced);
+        }
+      } catch {
+        // ignore (keeps UX smooth)
+      } finally {
+        setRefreshing(false);
+      }
+    }, 450);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, order.items]);
 
   const customerComplete =
     customer.name.trim().length > 0 &&
@@ -102,11 +145,15 @@ export default function ChatWidget({ presetMessage }) {
   };
 
   const refreshOrderTotals = async () => {
+    if (refreshing) return;
+    setRefreshing(true);
     try {
       const priced = await previewTotals(order.items || []);
       if (priced?.items) setOrder(priced);
     } catch {
-      // ignore
+      setMessages((prev) => [...prev, { from: "fer", text: "No pude actualizar los totales. Probá de nuevo." }]);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -331,8 +378,13 @@ export default function ChatWidget({ presetMessage }) {
                 ))}
 
                 <div className="chat-editor-actions">
-                  <button type="button" className="chat-secondary" onClick={refreshOrderTotals}>
-                    Actualizar totales
+                  <button
+                    type="button"
+                    className="chat-secondary"
+                    onClick={refreshOrderTotals}
+                    disabled={refreshing}
+                  >
+                    {refreshing ? "Recalculando…" : "Recalcular"}
                   </button>
                   <button type="button" className="chat-secondary" onClick={clearOrder}>
                     Vaciar pedido
@@ -365,4 +417,3 @@ export default function ChatWidget({ presetMessage }) {
     </>
   );
 }
-
