@@ -120,19 +120,25 @@ function updateOrderFromMessage(message, products, currentOrder) {
 
   const shouldRemove = msg.includes("quitar") || msg.includes("sacar") || msg.includes("eliminar");
   if (shouldRemove) {
-    const next = order.items.filter((it) => normalize(it.name) !== normalize(product.name));
+    const next = order.items.filter((it) => {
+      if (typeof it.productId === "number") return it.productId !== product.id;
+      return normalize(it.name) !== normalize(product.name);
+    });
     return computeOrderTotals({ items: next });
   }
 
   const qty = parseQuantity(message);
-  const existingIndex = order.items.findIndex((it) => normalize(it.name) === normalize(product.name));
+  const existingIndex = order.items.findIndex((it) => {
+    if (typeof it.productId === "number") return it.productId === product.id;
+    return normalize(it.name) === normalize(product.name);
+  });
 
   let item;
   if (qty?.grams) {
     const pricePerGram = (product.pricePerKg || 0) / 1000;
     const total = qty.grams * pricePerGram;
     item = {
-      id: product.id,
+      productId: product.id,
       name: product.name,
       grams: qty.grams,
       total: Math.round(total)
@@ -141,7 +147,7 @@ function updateOrderFromMessage(message, products, currentOrder) {
     const unit = product.unit || "kg";
     const price = product.price || 0;
     item = {
-      id: product.id,
+      productId: product.id,
       name: product.name,
       unit,
       quantity: 1,
@@ -160,6 +166,7 @@ router.post("/", async (req, res) => {
   try {
     const orderItemSchema = z.object({
       id: z.number().int().optional(),
+      productId: z.number().int().optional(),
       name: z.string(),
       grams: z.number().int().optional(),
       unit: z.string().optional(),
