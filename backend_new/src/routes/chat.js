@@ -79,7 +79,8 @@ function computeOrderTotals(order) {
 function formatOrderSummary(order) {
   if (!order?.items?.length) return "";
   const lines = order.items.map((it) => {
-    const qty = it.grams ? `${it.grams}g` : `${it.quantity ?? 1} ${it.unit ?? ""}`.trim();
+    const unit = String(it.unit || "").toLowerCase() === "1kg" ? "kg" : String(it.unit || "");
+    const qty = it.grams ? `${it.grams}g` : `${it.quantity ?? 1} ${unit}`.trim();
     const price = it.total ? `$${formatMoneyARS(it.total)}` : "";
     return `- ${it.name}: ${qty}${price ? ` (${price})` : ""}`;
   });
@@ -144,14 +145,16 @@ function updateOrderFromMessage(message, products, currentOrder) {
       total: Math.round(total)
     };
   } else {
-    const unit = product.unit || "kg";
+    const rawUnit = product.unit || "kg";
+    const unit = rawUnit.toLowerCase() === "1kg" ? "kg" : rawUnit;
     const price = product.price || 0;
+    const unitPrice = price > 0 ? price : unit.toLowerCase() === "kg" ? product.pricePerKg || 0 : 0;
     item = {
       productId: product.id,
       name: product.name,
       unit,
       quantity: 1,
-      total: Math.round(price)
+      total: Math.round(unitPrice)
     };
   }
 

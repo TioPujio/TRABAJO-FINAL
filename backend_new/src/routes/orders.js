@@ -72,10 +72,22 @@ async function priceOrderItems(items) {
     }
 
     const qty = typeof it.quantity === "number" ? Math.max(0, it.quantity) : 1;
-    const total = (base.price || 0) * qty;
+
+    const unit = String(it.unit || base.unit || "unidad");
+    const unitLower = unit.toLowerCase();
+
+    // Prefer explicit price; if missing but it's a kg-like unit, fall back to pricePerKg.
+    const unitPrice =
+      (base.price || 0) > 0
+        ? base.price || 0
+        : unitLower === "kg" || unitLower === "1kg"
+          ? base.pricePerKg || 0
+          : 0;
+
+    const total = unitPrice * qty;
     return {
       ...it,
-      unit: it.unit || base.unit || "unidad",
+      unit: unitLower === "1kg" ? "kg" : unit,
       quantity: qty,
       total: Math.round(total)
     };
