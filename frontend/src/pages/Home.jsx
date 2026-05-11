@@ -75,6 +75,7 @@ export default function Home({ products }) {
   const [suggestProduct, setSuggestProduct] = useState(null);
   const [catOpen, setCatOpen] = useState(false);
   const catRef = useRef(null);
+  const catCloseTimerRef = useRef(null);
 
   useEffect(() => {
     if (!catOpen) return;
@@ -95,6 +96,17 @@ export default function Home({ products }) {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [catOpen]);
+
+  const openCategories = () => {
+    if (catCloseTimerRef.current) clearTimeout(catCloseTimerRef.current);
+    catCloseTimerRef.current = null;
+    setCatOpen(true);
+  };
+
+  const closeCategoriesSoon = () => {
+    if (catCloseTimerRef.current) clearTimeout(catCloseTimerRef.current);
+    catCloseTimerRef.current = setTimeout(() => setCatOpen(false), 180);
+  };
 
   const consultarProducto = (product) => {
     setChatInput(`Quiero comprar ${product.name}`);
@@ -130,12 +142,7 @@ export default function Home({ products }) {
 
         <div className="header-controls below">
           <div className="search-group">
-            <div
-              className="category-menu"
-              ref={catRef}
-              onMouseEnter={() => setCatOpen(true)}
-              onMouseLeave={() => setCatOpen(false)}
-            >
+            <div className="category-menu" ref={catRef} onMouseEnter={openCategories} onMouseLeave={closeCategoriesSoon}>
               <button
                 type="button"
                 className="category-button"
@@ -150,7 +157,7 @@ export default function Home({ products }) {
               </button>
 
               {catOpen && (
-                <div className="category-dropdown" role="menu">
+                <div className="category-dropdown" role="menu" onMouseEnter={openCategories} onMouseLeave={closeCategoriesSoon}>
                   {CATEGORIES.map((cat) => (
                     <button
                       type="button"
