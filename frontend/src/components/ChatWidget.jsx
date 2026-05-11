@@ -12,6 +12,7 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
   const [refreshing, setRefreshing] = useState(false);
   const [orderId, setOrderId] = useState(null);
   const [orderConfirmed, setOrderConfirmed] = useState(false);
+  const [orderPanelOpen, setOrderPanelOpen] = useState(false);
 
   const [order, setOrder] = useState({ items: [], total: 0 });
   const [customer, setCustomer] = useState({
@@ -144,6 +145,7 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
     setOrder({ items: [], total: 0 });
     setOrderId(null);
     setOrderConfirmed(false);
+    setOrderPanelOpen(false);
   };
 
   const addSuggestedToOrder = (grams) => {
@@ -338,6 +340,25 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
           )}
 
           {order.items?.length > 0 && (
+            <div className="chat-orderbar">
+              <button
+                type="button"
+                className="chat-orderbar-btn"
+                onClick={() => setOrderPanelOpen((v) => !v)}
+              >
+                {orderPanelOpen ? "Ocultar mi pedido" : "Ver mi pedido"} ({order.items.length})
+              </button>
+              <div className="chat-orderbar-total">
+                Total: $
+                {Number(order.total).toLocaleString("es-AR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
+              </div>
+            </div>
+          )}
+
+          {order.items?.length > 0 && orderPanelOpen && (
             <div className="chat-actions">
               <div className="chat-order-editor">
                 {(order.items || []).map((it, idx) => (

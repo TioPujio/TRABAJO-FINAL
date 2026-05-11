@@ -83,6 +83,9 @@
   display: grid;
   gap: 4px;
   z-index: 20;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .category-item {
