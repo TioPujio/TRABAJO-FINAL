@@ -64,6 +64,7 @@ export default function Home({ products }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("TODAS");
   const [chatInput, setChatInput] = useState("");
+  const [catOpen, setCatOpen] = useState(false);
 
   const consultarProducto = (product) => {
     setChatInput(`Quiero comprar ${product.name}`);
@@ -96,25 +97,53 @@ export default function Home({ products }) {
           <h1>El Viejo Almacén Todo Suelto</h1>
         </div>
 
-        <input
-          className="search"
-          type="text"
-          placeholder="Buscar productos..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
-      <div className="filters">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            className={`filter ${filter === cat ? "active" : ""}`}
-            onClick={() => setFilter(cat)}
+        <div className="header-controls">
+          <div
+            className="category-menu"
+            onMouseEnter={() => setCatOpen(true)}
+            onMouseLeave={() => setCatOpen(false)}
           >
-            {toTitleCase(cat)}
-          </button>
-        ))}
+            <button
+              type="button"
+              className="category-button"
+              onClick={() => setCatOpen((v) => !v)}
+              aria-haspopup="menu"
+              aria-expanded={catOpen}
+            >
+              Categorías
+              <span className="category-caret" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+
+            {catOpen && (
+              <div className="category-dropdown" role="menu">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    type="button"
+                    key={cat}
+                    role="menuitem"
+                    className={`category-item ${filter === cat ? "active" : ""}`}
+                    onClick={() => {
+                      setFilter(cat);
+                      setCatOpen(false);
+                    }}
+                  >
+                    {toTitleCase(cat)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <input
+            className="search"
+            type="text"
+            placeholder="Buscar productos..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="products-grid">
