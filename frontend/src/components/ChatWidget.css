@@ -39,6 +39,15 @@
   max-height: calc(100vh - 140px);
 }
 
+.chat-window.embedded {
+  position: static;
+  right: auto;
+  left: auto;
+  bottom: auto;
+  width: 100%;
+  max-height: 78vh;
+}
+
 .chat-topbar {
   background: #5a6f55;
   color: white;
@@ -354,6 +363,14 @@
     width: auto;
     bottom: 74px;
     max-height: calc(100vh - 110px);
+  }
+
+  .chat-window.embedded {
+    right: auto;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-height: none;
   }
 
   .chat-suggest {

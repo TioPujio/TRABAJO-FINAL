@@ -10,8 +10,8 @@ function formatARS(value) {
   });
 }
 
-export default function ChatWidget({ presetMessage, suggestProduct }) {
-  const { order, setOrder, setView, previewTotals } = useOrder();
+export default function ChatWidget({ presetMessage, suggestProduct, embedded = false }) {
+  const { order, setOrder, setView, previewTotals, view } = useOrder();
 
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -154,24 +154,30 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
     }
   };
 
+  const isOpen = embedded ? true : open;
+
   return (
     <>
-      <button className="chat-fab" onClick={() => setOpen((v) => !v)} aria-label="Abrir chat con FER">
-        <span className="chat-fab-icon" aria-hidden="true">
-          💬
-        </span>
-      </button>
+      {!embedded && (
+        <button className="chat-fab" onClick={() => setOpen((v) => !v)} aria-label="Abrir chat con FER">
+          <span className="chat-fab-icon" aria-hidden="true">
+            💬
+          </span>
+        </button>
+      )}
 
-      {open && (
-        <div className="chat-window" role="dialog" aria-label="Chat con FER">
+      {isOpen && (
+        <div className={`chat-window ${embedded ? "embedded" : ""}`} role="dialog" aria-label="Chat con FER">
           <div className="chat-topbar">
             <div className="chat-title">
               <span className="chat-dot" aria-hidden="true" />
               asistente virtual
             </div>
-            <button className="chat-close" onClick={() => setOpen(false)} aria-label="Cerrar chat">
-              ×
-            </button>
+            {!embedded && (
+              <button className="chat-close" onClick={() => setOpen(false)} aria-label="Cerrar chat">
+                ×
+              </button>
+            )}
           </div>
 
           <div className="chat-body" ref={bodyRef}>
@@ -239,22 +245,23 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
               </div>
             )}
 
-            <div className="chat-orderbar">
-              <button type="button" className="chat-orderbar-btn" onClick={() => setView("order")}>
-                Ver mi pedido ({itemsCount})
-              </button>
-              <div className="chat-orderbar-total">
-                Total: $
-                {Number(order.total || 0).toLocaleString("es-AR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
+            {view !== "order" && (
+              <div className="chat-orderbar">
+                <button type="button" className="chat-orderbar-btn" onClick={() => setView("order")}>
+                  Ver mi pedido ({itemsCount})
+                </button>
+                <div className="chat-orderbar-total">
+                  Total: $
+                  {Number(order.total || 0).toLocaleString("es-AR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
     </>
   );
 }
-

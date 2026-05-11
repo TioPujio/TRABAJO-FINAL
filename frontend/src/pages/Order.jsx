@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { API_URL } from "../services/api";
 import { useOrder } from "../lib/orderContext";
+import ChatWidget from "../components/ChatWidget";
 import "./Order.css";
 
 const WHATSAPP_NUMBER = "5492994221315";
@@ -27,8 +28,6 @@ export default function OrderPage() {
 
   const [creating, setCreating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [recoLoading, setRecoLoading] = useState(false);
-  const [recoText, setRecoText] = useState("");
 
   const items = order.items || [];
 
@@ -122,29 +121,6 @@ export default function OrderPage() {
     }
   };
 
-  const askCombos = async () => {
-    if (recoLoading || !items.length) return;
-    setRecoLoading(true);
-    try {
-      const names = items.map((it) => (typeof it.grams === "number" ? `${it.name} (${it.grams}g)` : `${it.name}`));
-      const message = `Armá una recomendación breve de combos o productos que combinen con este pedido:\n- ${names.join(
-        "\n- "
-      )}\n\nRespondé en 4-6 líneas, tono vendedor amable.`;
-
-      const res = await fetch(`${API_URL}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
-      });
-      const data = await res.json();
-      setRecoText(data.reply || "");
-    } catch {
-      setRecoText("No pude obtener recomendaciones ahora. Probá de nuevo en un rato.");
-    } finally {
-      setRecoLoading(false);
-    }
-  };
-
   return (
     <div className="order-page">
       <div className="order-top">
@@ -158,147 +134,149 @@ export default function OrderPage() {
         </div>
       </div>
 
-      {items.length === 0 ? (
-        <div className="order-empty">
-          Todavía no agregaste productos. Volvé al catálogo y tocá “Consultar” para sumar al pedido.
-        </div>
-      ) : (
-        <>
-          <div className="order-actions">
-            <button type="button" className="order-secondary" onClick={recalc} disabled={refreshing}>
-              {refreshing ? "Recalculando…" : "Recalcular totales"}
-            </button>
-            <button type="button" className="order-secondary" onClick={clearOrder}>
-              Vaciar pedido
-            </button>
-            <button type="button" className="order-primary" onClick={askCombos} disabled={recoLoading}>
-              {recoLoading ? "Pensando…" : "Recomendaciones de FER"}
-            </button>
-          </div>
-
-          {recoText ? <div className="order-reco">{recoText}</div> : null}
-
-          <div className="order-list">
-            {items.map((it, idx) => (
-              <div key={`${it.name}-${idx}`} className="order-line">
-                <div className="order-line-main">
-                  <div className="order-line-name">{it.name}</div>
-                  <div className="order-line-sub">
-                    {typeof it.grams === "number" ? `${it.grams}g` : `${it.quantity ?? 1} ${it.unit || ""}`.trim()}
-                  </div>
-                </div>
-
-                <div className="order-line-controls">
-                  {typeof it.grams === "number" ? (
-                    <input
-                      type="number"
-                      min="0"
-                      value={it.grams}
-                      onChange={(e) => {
-                        const grams = Math.max(0, Number(e.target.value || 0));
-                        setOrder((o) => {
-                          const next = [...(o.items || [])];
-                          next[idx] = { ...next[idx], grams };
-                          return { ...o, items: next };
-                        });
-                      }}
-                      aria-label={`Gramos de ${it.name}`}
-                    />
-                  ) : (
-                    <input
-                      type="number"
-                      min="0"
-                      value={it.quantity ?? 1}
-                      onChange={(e) => {
-                        const quantity = Math.max(0, Number(e.target.value || 0));
-                        setOrder((o) => {
-                          const next = [...(o.items || [])];
-                          next[idx] = { ...next[idx], quantity };
-                          return { ...o, items: next };
-                        });
-                      }}
-                      aria-label={`Cantidad de ${it.name}`}
-                    />
-                  )}
-
-                  <div className="order-line-price">${formatARS(it.total || 0)}</div>
-                  <button
-                    type="button"
-                    className="order-remove"
-                    onClick={() => setOrder((o) => ({ ...o, items: (o.items || []).filter((_, i) => i !== idx) }))}
-                  >
-                    Quitar
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="order-form">
-            <h3>Datos para retirar</h3>
-
-            <div className="order-form-row">
-              <label>
-                Nombre y apellido
-                <input
-                  value={customer.name}
-                  onChange={(e) => setCustomer((c) => ({ ...c, name: e.target.value }))}
-                  placeholder="Ej: Juan Pérez"
-                />
-              </label>
-              <label>
-                Teléfono
-                <input
-                  value={customer.phone}
-                  onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
-                  placeholder="Ej: 299 123 4567"
-                />
-              </label>
+      <div className="order-layout">
+        <div className="order-main">
+          {items.length === 0 ? (
+            <div className="order-empty">
+              Todavía no agregaste productos. Volvé al catálogo y tocá “Consultar” para sumar al pedido.
             </div>
+          ) : (
+            <>
+              <div className="order-actions">
+                <button type="button" className="order-secondary" onClick={recalc} disabled={refreshing}>
+                  {refreshing ? "Recalculando…" : "Recalcular totales"}
+                </button>
+                <button type="button" className="order-secondary" onClick={clearOrder}>
+                  Vaciar pedido
+                </button>
+              </div>
 
-            <label>
-              Horario aproximado de retiro
-              <input
-                value={customer.pickupTime}
-                onChange={(e) => setCustomer((c) => ({ ...c, pickupTime: e.target.value }))}
-                placeholder="Ej: hoy 18:30 / mañana 10:00"
-              />
-            </label>
+              <div className="order-list">
+                {items.map((it, idx) => (
+                  <div key={`${it.name}-${idx}`} className="order-line">
+                    <div className="order-line-main">
+                      <div className="order-line-name">{it.name}</div>
+                      <div className="order-line-sub">
+                        {typeof it.grams === "number" ? `${it.grams}g` : `${it.quantity ?? 1} ${it.unit || ""}`.trim()}
+                      </div>
+                    </div>
 
-            <label className="order-check">
-              <input
-                type="checkbox"
-                checked={customer.transferred}
-                onChange={(e) => setCustomer((c) => ({ ...c, transferred: e.target.checked }))}
-              />
-              Ya transferí
-            </label>
+                    <div className="order-line-controls">
+                      {typeof it.grams === "number" ? (
+                        <input
+                          type="number"
+                          min="0"
+                          value={it.grams}
+                          onChange={(e) => {
+                            const grams = Math.max(0, Number(e.target.value || 0));
+                            setOrder((o) => {
+                              const next = [...(o.items || [])];
+                              next[idx] = { ...next[idx], grams };
+                              return { ...o, items: next };
+                            });
+                          }}
+                          aria-label={`Gramos de ${it.name}`}
+                        />
+                      ) : (
+                        <input
+                          type="number"
+                          min="0"
+                          value={it.quantity ?? 1}
+                          onChange={(e) => {
+                            const quantity = Math.max(0, Number(e.target.value || 0));
+                            setOrder((o) => {
+                              const next = [...(o.items || [])];
+                              next[idx] = { ...next[idx], quantity };
+                              return { ...o, items: next };
+                            });
+                          }}
+                          aria-label={`Cantidad de ${it.name}`}
+                        />
+                      )}
 
-            {customer.transferred && (
-              <label>
-                Comprobante (opcional)
-                <input
-                  type="file"
-                  accept="image/*,application/pdf"
-                  onChange={(e) => setReceiptFileName(e.target.files?.[0]?.name || "")}
-                />
-                {receiptFileName ? <div className="order-file">{receiptFileName}</div> : null}
-                <div className="order-hint">Se adjunta manualmente en WhatsApp.</div>
-              </label>
-            )}
+                      <div className="order-line-price">${formatARS(it.total || 0)}</div>
+                      <button
+                        type="button"
+                        className="order-remove"
+                        onClick={() => setOrder((o) => ({ ...o, items: (o.items || []).filter((_, i) => i !== idx) }))}
+                      >
+                        Quitar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-            <button
-              type="button"
-              className={`order-whatsapp ${customerComplete && !creating ? "" : "disabled"}`}
-              onClick={sendToWhatsApp}
-              disabled={!customerComplete || creating}
-            >
-              {creating ? "Generando…" : "Enviar pedido por WhatsApp"}
-            </button>
-          </div>
-        </>
-      )}
+              <div className="order-form">
+                <h3>Datos para retirar</h3>
+
+                <div className="order-form-row">
+                  <label>
+                    Nombre y apellido
+                    <input
+                      value={customer.name}
+                      onChange={(e) => setCustomer((c) => ({ ...c, name: e.target.value }))}
+                      placeholder="Ej: Juan Pérez"
+                    />
+                  </label>
+                  <label>
+                    Teléfono
+                    <input
+                      value={customer.phone}
+                      onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
+                      placeholder="Ej: 299 123 4567"
+                    />
+                  </label>
+                </div>
+
+                <label>
+                  Horario aproximado de retiro
+                  <input
+                    value={customer.pickupTime}
+                    onChange={(e) => setCustomer((c) => ({ ...c, pickupTime: e.target.value }))}
+                    placeholder="Ej: hoy 18:30 / mañana 10:00"
+                  />
+                </label>
+
+                <label className="order-check">
+                  <input
+                    type="checkbox"
+                    checked={customer.transferred}
+                    onChange={(e) => setCustomer((c) => ({ ...c, transferred: e.target.checked }))}
+                  />
+                  Ya transferí
+                </label>
+
+                {customer.transferred && (
+                  <label>
+                    Comprobante (opcional)
+                    <input
+                      type="file"
+                      accept="image/*,application/pdf"
+                      onChange={(e) => setReceiptFileName(e.target.files?.[0]?.name || "")}
+                    />
+                    {receiptFileName ? <div className="order-file">{receiptFileName}</div> : null}
+                    <div className="order-hint">Se adjunta manualmente en WhatsApp.</div>
+                  </label>
+                )}
+
+                <button
+                  type="button"
+                  className={`order-whatsapp ${customerComplete && !creating ? "" : "disabled"}`}
+                  onClick={sendToWhatsApp}
+                  disabled={!customerComplete || creating}
+                >
+                  {creating ? "Generando…" : "Enviar pedido por WhatsApp"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="order-chat">
+          <ChatWidget embedded />
+        </div>
+      </div>
     </div>
   );
 }
-
