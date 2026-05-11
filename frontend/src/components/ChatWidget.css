@@ -295,3 +295,22 @@
   background: rgba(0, 0, 0, 0.10);
 }
 
+.chat-secondary:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.chat-primary {
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #2f5d3b;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.chat-primary:hover {
+  background: #254a30;
+}
+
