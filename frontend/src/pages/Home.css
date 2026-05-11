@@ -98,7 +98,8 @@
 
 .category-dropdown {
   position: absolute;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   top: calc(100% + 2px);
   width: 260px;
   background: #ffffff;
@@ -198,8 +199,8 @@
   }
 
   .category-dropdown {
-    right: auto;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: min(92vw, 320px);
   }
 
