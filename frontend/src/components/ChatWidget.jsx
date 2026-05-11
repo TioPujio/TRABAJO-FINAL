@@ -434,14 +434,16 @@ export default function ChatWidget({ presetMessage }) {
                 {orderId ? ` • #${orderId}` : ""}
               </div>
 
-              <button
-                type="button"
-                className={`chat-whatsapp ${orderConfirmed && customerComplete && !creating ? "" : "disabled"}`}
-                onClick={sendToWhatsApp}
-                disabled={!orderConfirmed || !customerComplete || creating}
-              >
-                {creating ? "Generando…" : "Enviar por WhatsApp"}
-              </button>
+              {orderConfirmed && (
+                <button
+                  type="button"
+                  className={`chat-whatsapp ${customerComplete && !creating ? "" : "disabled"}`}
+                  onClick={sendToWhatsApp}
+                  disabled={!customerComplete || creating}
+                >
+                  {creating ? "Generando…" : "Enviar por WhatsApp"}
+                </button>
+              )}
 
               {!orderConfirmed && (
                 <div className="chat-order-hint">Confirmá el pedido para cargar tus datos y enviarlo.</div>
