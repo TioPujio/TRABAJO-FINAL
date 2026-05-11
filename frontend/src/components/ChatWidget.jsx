@@ -7,7 +7,6 @@ export default function ChatWidget({ presetMessage }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState({ items: [], total: 0 });
-  const [whatsappUrl, setWhatsappUrl] = useState("");
   const [customer, setCustomer] = useState({
     name: "",
     phone: "",
@@ -35,6 +34,52 @@ export default function ChatWidget({ presetMessage }) {
     el.scrollTop = el.scrollHeight;
   }, [open, messages.length, loading]);
 
+  const buildWhatsAppText = () => {
+    const lines = [];
+
+    lines.push("Hola! Quiero hacer este pedido:\n");
+
+    lines.push("Pedido:");
+    for (const item of order.items || []) {
+      const name = item.name || "Producto";
+
+      let qty = "";
+      if (item.grams) {
+        qty = `${item.grams}g`;
+      } else {
+        const unit = String(item.unit || "").toLowerCase();
+        const q = item.quantity ?? 1;
+        if (unit === "1kg" || unit === "kg") qty = `${q}kg`;
+        else if (unit === "1lt" || unit === "lt" || unit === "l") qty = `${q}lt`;
+        else if (unit) qty = `${q} ${unit}`;
+        else qty = String(q);
+      }
+
+      const total = Number(item.total);
+      const price = Number.isFinite(total) && total > 0 ? ` ($${total.toLocaleString("es-AR")})` : "";
+      lines.push(`- ${name}: ${qty}${price}`);
+    }
+
+    if (order.total) {
+      lines.push(`\nTotal aprox: $${Number(order.total).toLocaleString("es-AR")}\n`);
+    } else {
+      lines.push("");
+    }
+
+    lines.push("Datos:");
+    lines.push(`Nombre: ${customer.name.trim()}`);
+    lines.push(`Teléfono: ${customer.phone.trim()}`);
+    lines.push(`Retiro: ${customer.pickupTime.trim()}`);
+    lines.push(`Pago: ${customer.transferred ? "Transferencia (adjunto comprobante)" : "Al retirar"}`);
+
+    lines.push("\n¿Me lo preparan para retirar?");
+
+    return lines.join("\n");
+  };
+
+  const whatsappUrl =
+    order.items?.length > 0 ? `https://wa.me/5492994221315?text=${encodeURIComponent(buildWhatsAppText())}` : "";
+
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
 
@@ -51,7 +96,6 @@ export default function ChatWidget({ presetMessage }) {
       });
       const data = await res.json();
       if (data.order) setOrder(data.order);
-      if (data.whatsappUrl) setWhatsappUrl(data.whatsappUrl);
       setMessages((prev) => [...prev, { from: "fer", text: data.reply || "OK" }]);
     } catch {
       setMessages((prev) => [...prev, { from: "fer", text: "No pude conectar. Intentá de nuevo." }]);
@@ -112,7 +156,7 @@ export default function ChatWidget({ presetMessage }) {
             </button>
           </div>
 
-          {order.items?.length > 0 && whatsappUrl && (
+          {order.items?.length > 0 && (
             <div className="chat-actions">
               <div className="chat-form">
                 <div className="chat-form-row">
