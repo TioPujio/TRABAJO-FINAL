@@ -1,29 +1,25 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./ChatWidget.css";
 import { API_URL } from "../services/api";
+import { useOrder } from "../lib/orderContext";
 
-const WHATSAPP_NUMBER = "5492994221315";
+function formatARS(value) {
+  return Number(value || 0).toLocaleString("es-AR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
 
 export default function ChatWidget({ presetMessage, suggestProduct }) {
+  const { order, setOrder, setView, previewTotals } = useOrder();
+
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [orderId, setOrderId] = useState(null);
-  const [orderConfirmed, setOrderConfirmed] = useState(false);
-  const [orderPanelOpen, setOrderPanelOpen] = useState(false);
 
-  const [order, setOrder] = useState({ items: [], total: 0 });
-  const [customer, setCustomer] = useState({
-    name: "",
-    phone: "",
-    pickupTime: "",
-    transferred: false
-  });
-  const [receiptFileName, setReceiptFileName] = useState("");
   const [quickGrams, setQuickGrams] = useState("");
   const [quickKg, setQuickKg] = useState("");
+  const [suggestedTotal, setSuggestedTotal] = useState(0);
 
   const [messages, setMessages] = useState([
     { from: "fer", text: "Hola, soy FER. ¿Qué estás buscando hoy?" }
@@ -31,14 +27,7 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
 
   const bodyRef = useRef(null);
 
-  // Auto-update totals with a small debounce when quantities change.
-  const debounceRef = useRef(null);
-  const lastSentRef = useRef("");
-
-  const customerComplete =
-    customer.name.trim().length > 0 &&
-    customer.phone.trim().length > 0 &&
-    customer.pickupTime.trim().length > 0;
+  const itemsCount = order.items?.length || 0;
 
   useEffect(() => {
     if (presetMessage) {
@@ -76,218 +65,68 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [suggestProduct?.id]);
 
-  const previewTotals = async (items) => {
-    const res = await fetch(`${API_URL}/orders/preview`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items })
-    });
-    return res.json();
-  };
-
-  const normalizePriced = (priced) => ({
-    items: Array.isArray(priced?.items) ? priced.items : [],
-    total: Number.isFinite(Number(priced?.total)) ? Number(priced.total) : 0
-  });
-
-  const refreshOrderTotals = async () => {
-    if (refreshing) return;
-    setRefreshing(true);
-    try {
-      const priced = await previewTotals(order.items || []);
-      const normalized = normalizePriced(priced);
-      if (normalized.items.length) setOrder(normalized);
-    } catch {
-      setMessages((prev) => [...prev, { from: "fer", text: "No pude recalcular los totales. Probá de nuevo." }]);
-    } finally {
-      setRefreshing(false);
-    }
-  };
+  const suggestedGrams = useMemo(() => {
+    const grams = Number(String(quickGrams || "").replace(",", "."));
+    if (Number.isFinite(grams) && grams > 0) return Math.round(grams);
+    const kg = Number(String(quickKg || "").replace(",", "."));
+    if (Number.isFinite(kg) && kg > 0) return Math.round(kg * 1000);
+    return 0;
+  }, [quickGrams, quickKg]);
 
   useEffect(() => {
-    if (!open) return;
-    if (!order.items?.length) return;
+    let active = true;
 
-    const signature = JSON.stringify(
-      (order.items || []).map((it) => ({
-        productId: it.productId,
-        name: it.name,
-        grams: it.grams,
-        unit: it.unit,
-        quantity: it.quantity
-      }))
-    );
+    const run = async () => {
+      if (!suggestProduct || suggestedGrams <= 0) {
+        setSuggestedTotal(0);
+        return;
+      }
 
-    if (signature === lastSentRef.current) return;
-
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(async () => {
-      setRefreshing(true);
       try {
-        const priced = await previewTotals(order.items || []);
-        const normalized = normalizePriced(priced);
-        if (normalized.items.length) {
-          lastSentRef.current = signature;
-          setOrder(normalized);
-        }
+        const priced = await previewTotals([
+          {
+            productId: suggestProduct.id,
+            name: suggestProduct.name,
+            grams: suggestedGrams
+          }
+        ]);
+        if (!active) return;
+        setSuggestedTotal(Number(priced?.total) || 0);
       } catch {
-        // ignore
-      } finally {
-        setRefreshing(false);
+        if (!active) return;
+        setSuggestedTotal(0);
       }
-    }, 450);
+    };
 
+    run();
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      active = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, order.items]);
+  }, [previewTotals, suggestProduct, suggestedGrams]);
 
-  const clearOrder = () => {
-    setOrder({ items: [], total: 0 });
-    setOrderId(null);
-    setOrderConfirmed(false);
-    setOrderPanelOpen(false);
-  };
+  const addSuggestedFromInputs = async () => {
+    if (!suggestProduct || suggestedGrams <= 0) return;
 
-  const addSuggestedToOrder = (grams) => {
-    if (!suggestProduct?.id || orderConfirmed) return;
-    const item = {
-      productId: suggestProduct.id,
-      name: suggestProduct.name,
-      grams,
-      total: 0
-    };
-    setOrder((o) => ({ ...o, items: [...(o.items || []), item] }));
-    setMessages((prev) => [...prev, { from: "user", text: `Agregá ${grams}g de ${suggestProduct.name}` }]);
-  };
-
-  const addSuggestedFromInputs = () => {
-    if (!suggestProduct?.id || orderConfirmed) return;
-    const kg = Number(String(quickKg).replace(",", "."));
-    const grams = Number(String(quickGrams).replace(",", "."));
-
-    let finalGrams = 0;
-    if (Number.isFinite(kg) && kg > 0) finalGrams = Math.round(kg * 1000);
-    else if (Number.isFinite(grams) && grams > 0) finalGrams = Math.round(grams);
-
-    if (finalGrams <= 0) return;
-
-    addSuggestedToOrder(finalGrams);
-    setQuickGrams("");
-    setQuickKg("");
-  };
-
-  const parseNumber = (v) => {
-    const n = Number(String(v ?? "").replace(",", "."));
-    return Number.isFinite(n) ? n : 0;
-  };
-
-  const suggestedGrams = (() => {
-    const kg = parseNumber(quickKg);
-    const g = parseNumber(quickGrams);
-    if (kg > 0) return Math.round(kg * 1000);
-    if (g > 0) return Math.round(g);
-    return 0;
-  })();
-
-  const suggestedTotal = (() => {
-    if (!suggestProduct || suggestedGrams <= 0) return 0;
-    const pricePerKg = Number(suggestProduct.pricePerKg) || 0;
-    return (suggestedGrams * pricePerKg) / 1000;
-  })();
-
-  const formatARS = (value) =>
-    Number(value || 0).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-  const buildWhatsAppText = (finalOrderId) => {
-    const lines = [];
-
-    lines.push("Hola! Quiero hacer este pedido:\n");
-    if (finalOrderId) lines.push(`Pedido #${finalOrderId}\n`);
-
-    lines.push("Pedido:");
-    for (const item of order.items || []) {
-      const name = item.name || "Producto";
-
-      let qty = "";
-      if (typeof item.grams === "number") {
-        qty = `${item.grams}g`;
-      } else {
-        const unit = String(item.unit || "").toLowerCase();
-        const q = item.quantity ?? 1;
-        if (unit === "1kg" || unit === "kg") qty = `${q}kg`;
-        else if (unit === "1lt" || unit === "lt" || unit === "l") qty = `${q}lt`;
-        else if (unit) qty = `${q} ${unit}`;
-        else qty = String(q);
+    const nextItems = [
+      ...(order.items || []),
+      {
+        productId: suggestProduct.id,
+        name: suggestProduct.name,
+        grams: suggestedGrams
       }
+    ];
 
-      const total = Number(item.total);
-      const price =
-        Number.isFinite(total) && total > 0
-          ? ` ($${total.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`
-          : "";
-      lines.push(`- ${name}: ${qty}${price}`);
-    }
-
-    if (order.total) {
-      lines.push(
-        `\nTotal aprox: $${Number(order.total).toLocaleString("es-AR", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        })}\n`
-      );
-    } else {
-      lines.push("");
-    }
-
-    lines.push("Datos:");
-    lines.push(`Nombre: ${customer.name.trim()}`);
-    lines.push(`Teléfono: ${customer.phone.trim()}`);
-    lines.push(`Retiro: ${customer.pickupTime.trim()}`);
-    lines.push(`Pago: ${customer.transferred ? "Transferencia (adjunto comprobante)" : "Al retirar"}`);
-    if (customer.transferred) {
-      lines.push(receiptFileName ? `Comprobante: ${receiptFileName}` : "Comprobante: (adjunto en WhatsApp)");
-    }
-
-    lines.push("\n¿Me lo preparan para retirar?");
-
-    return lines.join("\n");
-  };
-
-  const createOrder = async () => {
-    const res = await fetch(`${API_URL}/orders`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customer: {
-          name: customer.name.trim(),
-          phone: customer.phone.trim(),
-          pickupTime: customer.pickupTime.trim(),
-          transferred: customer.transferred
-        },
-        items: order.items || []
-      })
-    });
-    if (!res.ok) throw new Error("failed");
-    return res.json();
-  };
-
-  const sendToWhatsApp = async () => {
-    if (!orderConfirmed || !customerComplete || creating || !order.items?.length) return;
-    setCreating(true);
     try {
-      const created = await createOrder();
-      setOrderId(created.id);
-      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsAppText(created.id))}`;
-      window.open(url, "_blank", "noopener,noreferrer");
+      const priced = await previewTotals(nextItems);
+      setOrder({
+        items: Array.isArray(priced?.items) ? priced.items : nextItems,
+        total: Number(priced?.total) || 0
+      });
+      setQuickGrams("");
+      setQuickKg("");
+      setMessages((prev) => [...prev, { from: "fer", text: "Listo, lo sumé al pedido 🙌" }]);
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { from: "fer", text: "No pude generar el pedido. Intentá de nuevo en unos segundos." }
-      ]);
-    } finally {
-      setCreating(false);
+      setMessages((prev) => [...prev, { from: "fer", text: "No pude agregarlo al pedido. Probá de nuevo." }]);
     }
   };
 
@@ -303,7 +142,7 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
       const res = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: messageToSend, order, customer })
+        body: JSON.stringify({ message: messageToSend, order })
       });
       const data = await res.json();
       if (data.order) setOrder(data.order);
@@ -363,7 +202,7 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
           </div>
 
           <div className="chat-bottom">
-            {suggestProduct && !orderConfirmed && (
+            {suggestProduct && (
               <div className="chat-suggest">
                 <div className="chat-suggest-fields">
                   <label>
@@ -401,12 +240,8 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
             )}
 
             <div className="chat-orderbar">
-              <button
-                type="button"
-                className="chat-orderbar-btn"
-                onClick={() => setOrderPanelOpen((v) => !v)}
-              >
-                {orderPanelOpen ? "Ocultar mi pedido" : "Ver mi pedido"} ({order.items?.length || 0})
+              <button type="button" className="chat-orderbar-btn" onClick={() => setView("order")}>
+                Ver mi pedido ({itemsCount})
               </button>
               <div className="chat-orderbar-total">
                 Total: $
@@ -416,182 +251,10 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
                 })}
               </div>
             </div>
-
-            {orderPanelOpen && (
-              <div className="chat-actions">
-              {(!order.items || order.items.length === 0) && (
-                <div className="chat-order-empty">
-                  TodavÃ­a no agregaste productos al pedido. UsÃ¡ "Consultar" en un producto o pedime algo por acÃ¡.
-                </div>
-              )}
-              <div className="chat-order-editor">
-                {(order.items || []).map((it, idx) => (
-                  <div key={`${it.name}-${idx}`} className="chat-line">
-                    <div className="chat-line-title">{it.name}</div>
-                    <div className="chat-line-controls">
-                      {typeof it.grams === "number" ? (
-                        <input
-                          type="number"
-                          min="1"
-                          value={it.grams}
-                          disabled={orderConfirmed}
-                          onChange={(e) => {
-                            const raw = e.target.value;
-                            if (raw === "") return;
-                            const grams = Math.max(0, Number(raw));
-                            setOrder((o) => {
-                              const items = [...(o.items || [])];
-                              items[idx] = { ...items[idx], grams: Number.isFinite(grams) ? grams : items[idx].grams };
-                              return { ...o, items };
-                            });
-                          }}
-                          aria-label={`Gramos de ${it.name}`}
-                        />
-                      ) : (
-                        <input
-                          type="number"
-                          min="1"
-                          value={it.quantity ?? 1}
-                          disabled={orderConfirmed}
-                          onChange={(e) => {
-                            const raw = e.target.value;
-                            if (raw === "") return;
-                            const quantity = Math.max(0, Number(raw));
-                            setOrder((o) => {
-                              const items = [...(o.items || [])];
-                              items[idx] = {
-                                ...items[idx],
-                                quantity: Number.isFinite(quantity) ? quantity : items[idx].quantity
-                              };
-                              return { ...o, items };
-                            });
-                          }}
-                          aria-label={`Cantidad de ${it.name}`}
-                        />
-                      )}
-                      <button
-                        type="button"
-                        className="chat-line-remove"
-                        disabled={orderConfirmed}
-                        onClick={() => {
-                          setOrder((o) => ({ ...o, items: (o.items || []).filter((_, i) => i !== idx) }));
-                        }}
-                      >
-                        Quitar
-                      </button>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="chat-editor-actions">
-                  <button
-                    type="button"
-                    className="chat-secondary"
-                    onClick={refreshOrderTotals}
-                    disabled={refreshing}
-                  >
-                    {refreshing ? "Recalculando…" : "Recalcular"}
-                  </button>
-                  <button type="button" className="chat-secondary" onClick={clearOrder}>
-                    Vaciar pedido
-                  </button>
-                  <button
-                    type="button"
-                    className={`chat-primary ${orderConfirmed ? "on" : ""}`}
-                    onClick={() => setOrderConfirmed((v) => !v)}
-                  >
-                    {orderConfirmed ? "Editar pedido" : "Confirmar pedido"}
-                  </button>
-                </div>
-              </div>
-
-              {orderConfirmed && (
-                <div className="chat-form">
-                  <div className="chat-form-row">
-                    <label>
-                      Nombre y apellido
-                      <input
-                        value={customer.name}
-                        onChange={(e) => setCustomer((c) => ({ ...c, name: e.target.value }))}
-                        placeholder="Ej: Juan Pérez"
-                      />
-                    </label>
-                    <label>
-                      Teléfono
-                      <input
-                        value={customer.phone}
-                        onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
-                        placeholder="Ej: 299 123 4567"
-                      />
-                    </label>
-                  </div>
-
-                  <label>
-                    Horario aproximado de retiro
-                    <input
-                      value={customer.pickupTime}
-                      onChange={(e) => setCustomer((c) => ({ ...c, pickupTime: e.target.value }))}
-                      placeholder="Ej: hoy 18:30 / mañana 10:00"
-                    />
-                  </label>
-
-                  <div className="chat-form-row chat-form-inline">
-                    <label className="chat-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={customer.transferred}
-                        onChange={(e) => setCustomer((c) => ({ ...c, transferred: e.target.checked }))}
-                      />
-                      Ya transferí
-                    </label>
-
-                    {customer.transferred && (
-                      <label className="chat-receipt">
-                        Comprobante (opcional)
-                        <input
-                          type="file"
-                          accept="image/*,application/pdf"
-                          onChange={(e) => setReceiptFileName(e.target.files?.[0]?.name || "")}
-                        />
-                        {receiptFileName ? <span className="chat-file">{receiptFileName}</span> : null}
-                        <span className="chat-receipt-hint">Se adjunta manualmente en WhatsApp.</span>
-                      </label>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="chat-order-hint">
-                Pedido: {order.items.length} item{order.items.length === 1 ? "" : "s"} • Total aprox: $
-                {Number(order.total).toLocaleString("es-AR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
-                {orderId ? ` • #${orderId}` : ""}
-              </div>
-
-              {orderConfirmed && (
-                <button
-                  type="button"
-                  className={`chat-whatsapp ${customerComplete && !creating ? "" : "disabled"}`}
-                  onClick={sendToWhatsApp}
-                  disabled={!customerComplete || creating}
-                >
-                  {creating ? "Generando…" : "Enviar por WhatsApp"}
-                </button>
-              )}
-
-              {!orderConfirmed && (
-                <div className="chat-order-hint">Confirmá el pedido para cargar tus datos y enviarlo.</div>
-              )}
-              {orderConfirmed && !customerComplete && (
-                <div className="chat-order-hint">Completá tus datos para poder enviar el pedido.</div>
-              )}
-              </div>
-            )}
           </div>
         </div>
       )}
     </>
   );
 }
+
