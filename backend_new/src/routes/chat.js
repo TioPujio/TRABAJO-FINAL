@@ -67,7 +67,7 @@ function findProductInMessage(message, products) {
 function formatMoneyARS(value) {
   const n = Number(value);
   const safe = Number.isFinite(n) ? n : 0;
-  return Math.round(safe).toLocaleString("es-AR");
+  return safe.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function computeOrderTotals(order) {

@@ -112,12 +112,20 @@ export default function ChatWidget({ presetMessage }) {
       }
 
       const total = Number(item.total);
-      const price = Number.isFinite(total) && total > 0 ? ` ($${total.toLocaleString("es-AR")})` : "";
+      const price =
+        Number.isFinite(total) && total > 0
+          ? ` ($${total.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`
+          : "";
       lines.push(`- ${name}: ${qty}${price}`);
     }
 
     if (order.total) {
-      lines.push(`\nTotal aprox: $${Number(order.total).toLocaleString("es-AR")}\n`);
+      lines.push(
+        `\nTotal aprox: $${Number(order.total).toLocaleString("es-AR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })}\n`
+      );
     } else {
       lines.push("");
     }
@@ -405,7 +413,10 @@ export default function ChatWidget({ presetMessage }) {
 
               <div className="chat-order-hint">
                 Pedido: {order.items.length} item{order.items.length === 1 ? "" : "s"} • Total aprox: $
-                {order.total.toLocaleString("es-AR")}
+                {Number(order.total).toLocaleString("es-AR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
                 {orderId ? ` • #${orderId}` : ""}
               </div>
 
