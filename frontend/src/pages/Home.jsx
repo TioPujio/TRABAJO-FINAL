@@ -64,6 +64,7 @@ export default function Home({ products }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("TODAS");
   const [chatInput, setChatInput] = useState("");
+  const [suggestProduct, setSuggestProduct] = useState(null);
   const [catOpen, setCatOpen] = useState(false);
   const catRef = useRef(null);
 
@@ -89,6 +90,7 @@ export default function Home({ products }) {
 
   const consultarProducto = (product) => {
     setChatInput(`Quiero comprar ${product.name}`);
+    setSuggestProduct(product);
   };
 
   const dedupedProducts = useMemo(() => {
@@ -196,7 +198,7 @@ export default function Home({ products }) {
         ))}
       </div>
 
-      <ChatWidget presetMessage={chatInput} />
+      <ChatWidget presetMessage={chatInput} suggestProduct={suggestProduct} />
     </div>
   );
 }

@@ -4,13 +4,14 @@ import { API_URL } from "../services/api";
 
 const WHATSAPP_NUMBER = "5492994221315";
 
-export default function ChatWidget({ presetMessage }) {
+export default function ChatWidget({ presetMessage, suggestProduct }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [orderId, setOrderId] = useState(null);
+  const [orderConfirmed, setOrderConfirmed] = useState(false);
 
   const [order, setOrder] = useState({ items: [], total: 0 });
   const [customer, setCustomer] = useState({
@@ -20,13 +21,21 @@ export default function ChatWidget({ presetMessage }) {
     transferred: false
   });
   const [receiptFileName, setReceiptFileName] = useState("");
-  const [orderConfirmed, setOrderConfirmed] = useState(false);
 
   const [messages, setMessages] = useState([
     { from: "fer", text: "Hola, soy FER. ¿Qué estás buscando hoy?" }
   ]);
 
   const bodyRef = useRef(null);
+
+  // Auto-update totals with a small debounce when quantities change.
+  const debounceRef = useRef(null);
+  const lastSentRef = useRef("");
+
+  const customerComplete =
+    customer.name.trim().length > 0 &&
+    customer.phone.trim().length > 0 &&
+    customer.pickupTime.trim().length > 0;
 
   useEffect(() => {
     if (presetMessage) {
@@ -42,9 +51,55 @@ export default function ChatWidget({ presetMessage }) {
     el.scrollTop = el.scrollHeight;
   }, [open, messages.length, loading]);
 
-  // Auto-update totals with a small debounce when quantities change.
-  const debounceRef = useRef(null);
-  const lastSentRef = useRef("");
+  const describeProduct = (product) => {
+    const name = product?.name || "Este producto";
+    const category = String(product?.category || "").toLowerCase();
+
+    let note = "Buena opción para sumar al día a día.";
+    if (category.includes("frutos")) note = "Ideal para snacks, granolas o repostería.";
+    else if (category.includes("condimento")) note = "Perfecto para darle sabor a tus comidas.";
+    else if (category.includes("harina")) note = "Útil para panificados, rebozados o repostería.";
+    else if (category.includes("legumbre")) note = "Rinde un montón para guisos, ensaladas o sopas.";
+    else if (category.includes("semilla")) note = "Excelente para ensaladas, yogur o panes.";
+    else if (category.includes("cereal") || category.includes("copetin")) note = "Ideal para picar o armar mix.";
+
+    return `Te cuento rápido sobre ${name}:\n${note}\n\n¿Querés que lo agregue al pedido?`;
+  };
+
+  useEffect(() => {
+    if (!suggestProduct?.id) return;
+    setOpen(true);
+    setMessages((prev) => [...prev, { from: "fer", text: describeProduct(suggestProduct) }]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [suggestProduct?.id]);
+
+  const previewTotals = async (items) => {
+    const res = await fetch(`${API_URL}/orders/preview`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items })
+    });
+    return res.json();
+  };
+
+  const normalizePriced = (priced) => ({
+    items: Array.isArray(priced?.items) ? priced.items : [],
+    total: Number.isFinite(Number(priced?.total)) ? Number(priced.total) : 0
+  });
+
+  const refreshOrderTotals = async () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    try {
+      const priced = await previewTotals(order.items || []);
+      const normalized = normalizePriced(priced);
+      if (normalized.items.length) setOrder(normalized);
+    } catch {
+      setMessages((prev) => [...prev, { from: "fer", text: "No pude recalcular los totales. Probá de nuevo." }]);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -73,7 +128,7 @@ export default function ChatWidget({ presetMessage }) {
           setOrder(normalized);
         }
       } catch {
-        // ignore (keeps UX smooth)
+        // ignore
       } finally {
         setRefreshing(false);
       }
@@ -85,10 +140,23 @@ export default function ChatWidget({ presetMessage }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, order.items]);
 
-  const customerComplete =
-    customer.name.trim().length > 0 &&
-    customer.phone.trim().length > 0 &&
-    customer.pickupTime.trim().length > 0;
+  const clearOrder = () => {
+    setOrder({ items: [], total: 0 });
+    setOrderId(null);
+    setOrderConfirmed(false);
+  };
+
+  const addSuggestedToOrder = (grams) => {
+    if (!suggestProduct?.id || orderConfirmed) return;
+    const item = {
+      productId: suggestProduct.id,
+      name: suggestProduct.name,
+      grams,
+      total: 0
+    };
+    setOrder((o) => ({ ...o, items: [...(o.items || []), item] }));
+    setMessages((prev) => [...prev, { from: "user", text: `Agregá ${grams}g de ${suggestProduct.name}` }]);
+  };
 
   const buildWhatsAppText = (finalOrderId) => {
     const lines = [];
@@ -143,40 +211,6 @@ export default function ChatWidget({ presetMessage }) {
     lines.push("\n¿Me lo preparan para retirar?");
 
     return lines.join("\n");
-  };
-
-  const previewTotals = async (items) => {
-    const res = await fetch(`${API_URL}/orders/preview`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items })
-    });
-    return res.json();
-  };
-
-  const normalizePriced = (priced) => ({
-    items: Array.isArray(priced?.items) ? priced.items : [],
-    total: Number.isFinite(Number(priced?.total)) ? Number(priced.total) : 0
-  });
-
-  const refreshOrderTotals = async () => {
-    if (refreshing) return;
-    setRefreshing(true);
-    try {
-      const priced = await previewTotals(order.items || []);
-      const normalized = normalizePriced(priced);
-      if (normalized.items.length) setOrder(normalized);
-    } catch {
-      setMessages((prev) => [...prev, { from: "fer", text: "No pude actualizar los totales. Probá de nuevo." }]);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  const clearOrder = () => {
-    setOrder({ items: [], total: 0 });
-    setOrderId(null);
-    setOrderConfirmed(false);
   };
 
   const createOrder = async () => {
@@ -285,6 +319,17 @@ export default function ChatWidget({ presetMessage }) {
               enviar
             </button>
           </div>
+
+          {suggestProduct && !orderConfirmed && (
+            <div className="chat-suggest">
+              <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(500)}>
+                Agregar 500g
+              </button>
+              <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(1000)}>
+                Agregar 1kg
+              </button>
+            </div>
+          )}
 
           {order.items?.length > 0 && (
             <div className="chat-actions">
@@ -458,3 +503,4 @@ export default function ChatWidget({ presetMessage }) {
     </>
   );
 }
+
