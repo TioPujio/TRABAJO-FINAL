@@ -1,5 +1,5 @@
 import "./Home.css";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { API_URL } from "../services/api";
 import ChatWidget from "../components/ChatWidget";
 import logo from "../assets/logo.svg";
@@ -65,6 +65,27 @@ export default function Home({ products }) {
   const [filter, setFilter] = useState("TODAS");
   const [chatInput, setChatInput] = useState("");
   const [catOpen, setCatOpen] = useState(false);
+  const catRef = useRef(null);
+
+  useEffect(() => {
+    if (!catOpen) return;
+
+    const onDocMouseDown = (e) => {
+      if (!catRef.current) return;
+      if (!catRef.current.contains(e.target)) setCatOpen(false);
+    };
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setCatOpen(false);
+    };
+
+    document.addEventListener("mousedown", onDocMouseDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onDocMouseDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [catOpen]);
 
   const consultarProducto = (product) => {
     setChatInput(`Quiero comprar ${product.name}`);
@@ -100,8 +121,8 @@ export default function Home({ products }) {
         <div className="header-controls">
           <div
             className="category-menu"
+            ref={catRef}
             onMouseEnter={() => setCatOpen(true)}
-            onMouseLeave={() => setCatOpen(false)}
           >
             <button
               type="button"
