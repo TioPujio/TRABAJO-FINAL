@@ -38,6 +38,14 @@ function toTitleCase(value) {
     .join(" ");
 }
 
+function normalizeCategory(value) {
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
 function formatUnit(unit) {
   const u = String(unit || "kg").toLowerCase();
   if (u === "1kg") return "kg";
@@ -107,8 +115,8 @@ export default function Home({ products }) {
 
   const filteredProducts = dedupedProducts.filter((product) => {
     const matchSearch = product.name.toLowerCase().includes(search.toLowerCase());
-    const productCategory = String(product.category || "").toUpperCase();
-    const matchFilter = filter === "TODAS" || productCategory === filter;
+    const productCategory = normalizeCategory(product.category);
+    const matchFilter = normalizeCategory(filter) === "TODAS" || productCategory === normalizeCategory(filter);
     return matchSearch && matchFilter;
   });
 
@@ -135,6 +143,25 @@ export default function Home({ products }) {
                   ▾
                 </span>
               </button>
+
+              {catOpen && (
+                <div className="category-dropdown" role="menu">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      type="button"
+                      key={cat}
+                      role="menuitem"
+                      className={`category-item ${filter === cat ? "active" : ""}`}
+                      onClick={() => {
+                        setFilter(cat);
+                        setCatOpen(false);
+                      }}
+                    >
+                      {toTitleCase(cat)}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <input
@@ -145,24 +172,7 @@ export default function Home({ products }) {
               onChange={(e) => setSearch(e.target.value)}
             />
 
-            {catOpen && (
-              <div className="category-dropdown" role="menu">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    type="button"
-                    key={cat}
-                    role="menuitem"
-                    className={`category-item ${filter === cat ? "active" : ""}`}
-                    onClick={() => {
-                      setFilter(cat);
-                      setCatOpen(false);
-                    }}
-                  >
-                    {toTitleCase(cat)}
-                  </button>
-                ))}
-              </div>
-            )}
+
           </div>
         </div>
       </div>
