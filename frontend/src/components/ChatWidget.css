@@ -91,6 +91,7 @@
   font-size: 14px;
   line-height: 1.25;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .msg.user {
@@ -184,6 +185,20 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   flex: 1;
+}
+
+.chat-suggest-total {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.75);
+  background: rgba(47, 93, 59, 0.06);
+  border: 1px solid rgba(47, 93, 59, 0.12);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.chat-suggest-total span {
+  color: rgba(0, 0, 0, 0.55);
 }
 
 .chat-suggest label {

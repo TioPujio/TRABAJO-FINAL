@@ -178,6 +178,28 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
     setQuickKg("");
   };
 
+  const parseNumber = (v) => {
+    const n = Number(String(v ?? "").replace(",", "."));
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const suggestedGrams = (() => {
+    const kg = parseNumber(quickKg);
+    const g = parseNumber(quickGrams);
+    if (kg > 0) return Math.round(kg * 1000);
+    if (g > 0) return Math.round(g);
+    return 0;
+  })();
+
+  const suggestedTotal = (() => {
+    if (!suggestProduct || suggestedGrams <= 0) return 0;
+    const pricePerKg = Number(suggestProduct.pricePerKg) || 0;
+    return (suggestedGrams * pricePerKg) / 1000;
+  })();
+
+  const formatARS = (value) =>
+    Number(value || 0).toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   const buildWhatsAppText = (finalOrderId) => {
     const lines = [];
 
@@ -366,6 +388,10 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
                     onChange={(e) => setQuickKg(e.target.value)}
                   />
                 </label>
+                <div className="chat-suggest-total" aria-live="polite">
+                  Total aprox: <b>${formatARS(suggestedTotal)}</b>
+                  {suggestedGrams > 0 ? <span> ({suggestedGrams}g)</span> : null}
+                </div>
               </div>
               <button type="button" className="chat-suggest-add" onClick={addSuggestedFromInputs}>
                 Agregar
