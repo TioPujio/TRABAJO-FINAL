@@ -146,6 +146,62 @@
   gap: 8px;
 }
 
+.chat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-form label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chat-form input[type="text"],
+.chat-form input:not([type]) {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  outline: none;
+}
+
+.chat-form input:focus {
+  border-color: #2f5d3b;
+}
+
+.chat-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.chat-form-inline {
+  grid-template-columns: 1fr;
+}
+
+.chat-checkbox {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 10px !important;
+}
+
+.chat-receipt input[type="file"] {
+  font-size: 12px;
+}
+
+.chat-file {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.chat-receipt-hint {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.55);
+}
+
 .chat-order-hint {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.65);
@@ -163,5 +219,11 @@
 
 .chat-whatsapp:hover {
   background: #254a30;
+}
+
+.chat-whatsapp.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: auto;
 }
 

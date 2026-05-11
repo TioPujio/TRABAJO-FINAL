@@ -87,9 +87,24 @@ function formatOrderSummary(order) {
   return `Pedido:\n${lines.join("\n")}${total}`;
 }
 
-function buildWhatsAppText(order) {
+function buildWhatsAppText(order, customer) {
   const summary = formatOrderSummary(order);
-  return `Hola! Quiero hacer este pedido:\n\n${summary}\n\n¿Me lo preparan para retirar?`;
+
+  const name = customer?.name ? String(customer.name).trim() : "";
+  const phone = customer?.phone ? String(customer.phone).trim() : "";
+  const pickupTime = customer?.pickupTime ? String(customer.pickupTime).trim() : "";
+  const transferred = Boolean(customer?.transferred);
+
+  const customerLines = [
+    name ? `Nombre: ${name}` : null,
+    phone ? `Teléfono: ${phone}` : null,
+    pickupTime ? `Retiro: ${pickupTime}` : null,
+    `Pago: ${transferred ? "Transferencia (adjunto comprobante)" : "Al retirar"}`
+  ].filter(Boolean);
+
+  const customerBlock = customerLines.length ? `\n\nDatos:\n${customerLines.join("\n")}` : "";
+
+  return `Hola! Quiero hacer este pedido:\n\n${summary}${customerBlock}\n\n¿Me lo preparan para retirar?`;
 }
 
 function updateOrderFromMessage(message, products, currentOrder) {
@@ -152,13 +167,23 @@ router.post("/", async (req, res) => {
       total: z.number().int().optional()
     });
 
+    const customerSchema = z
+      .object({
+        name: z.string().optional(),
+        phone: z.string().optional(),
+        pickupTime: z.string().optional(),
+        transferred: z.boolean().optional()
+      })
+      .optional();
+
     const bodySchema = z.object({
       message: z.string().min(1),
       order: z
         .object({
           items: z.array(orderItemSchema).default([])
         })
-        .optional()
+        .optional(),
+      customer: customerSchema
     });
 
     const parsed = bodySchema.safeParse(req.body);
@@ -166,7 +191,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Invalid body", issues: parsed.error.issues });
     }
 
-    const { message, order: incomingOrder } = parsed.data;
+    const { message, order: incomingOrder, customer } = parsed.data;
 
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({ error: "Missing OPENAI_API_KEY" });
@@ -176,6 +201,10 @@ router.post("/", async (req, res) => {
 
     const productos = await prisma.product.findMany({ take: 200 });
     const updatedOrder = updateOrderFromMessage(message, productos, incomingOrder);
+    const whatsappText = updatedOrder.items.length ? buildWhatsAppText(updatedOrder, customer) : undefined;
+    const whatsappUrl = whatsappText
+      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappText)}`
+      : undefined;
 
     const calculo = calcularPrecio(message, productos);
     if (calculo) {
@@ -185,28 +214,30 @@ router.post("/", async (req, res) => {
       }
 
       return res.json({
-        reply: `💰 ${calculo.gramos}g de ${calculo.producto} te salen $${formatMoneyARS(calculo.total)}.\n\n👉 ¿Querés que te lo prepare?\n\nDecime “quiero llevarlo” y te paso el WhatsApp.\n\n${extra}`,
+        reply: `💰 ${calculo.gramos}g de ${calculo.producto} te salen $${formatMoneyARS(calculo.total)}.\n\n👉 ¿Querés que te lo prepare?\n\nSi ya tenés tu pedido armado, completá tus datos y tocá “Enviar por WhatsApp”.\n\n${extra}`,
         order: updatedOrder,
-        whatsappText: updatedOrder.items.length ? buildWhatsAppText(updatedOrder) : undefined,
-        whatsappUrl: updatedOrder.items.length
-          ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsAppText(updatedOrder))}`
-          : undefined
+        whatsappText,
+        whatsappUrl
       });
     }
 
     if (normalize(message).includes("quiero") || normalize(message).includes("llevar")) {
       return res.json({
-        reply: `Genial 🙌\n\nTe lo dejo preparado sin problema.\n\n📲 WhatsApp: 2994221315\n\nSi querés, tocá “Enviar por WhatsApp” y me llega tu pedido completo 👌`,
+        reply: `Genial 🙌\n\nTe lo dejo preparado sin problema.\n\n📲 WhatsApp: 2994221315\n\nCompletá tus datos y tocá “Enviar por WhatsApp” para mandarme el pedido completo 👌`,
         order: updatedOrder,
-        whatsappText: updatedOrder.items.length ? buildWhatsAppText(updatedOrder) : undefined,
-        whatsappUrl: updatedOrder.items.length
-          ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsAppText(updatedOrder))}`
-          : undefined
+        whatsappText,
+        whatsappUrl
       });
     }
 
     const productContext = productos.map((p) => `${p.name} - $${p.pricePerKg}/kg`).join("\n");
-    const prompt = `Sos FER, vendedor de almacén.\n\nProductos:\n${productContext}\n\nSi el usuario pide armar un pedido, pedile cantidades (en g o kg) y confirmá el resumen.`;
+    const prompt =
+      `Sos FER, vendedor de almacén.\n\nProductos:\n${productContext}\n\n` +
+      `Tu objetivo: ayudar a armar un pedido para retirar en el local.\n` +
+      `Si el usuario quiere comprar, pedile cantidades (en g o kg).\n` +
+      `Una vez armado el pedido, pedile datos obligatorios: nombre, teléfono y horario aproximado de retiro.\n` +
+      `Si el usuario dice que ya transfirió, pedile que adjunte el comprobante en WhatsApp.\n` +
+      `Mantené respuestas cortas y claras.`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-4.1",
@@ -222,10 +253,8 @@ router.post("/", async (req, res) => {
     res.json({
       reply,
       order: updatedOrder,
-      whatsappText: updatedOrder.items.length ? buildWhatsAppText(updatedOrder) : undefined,
-      whatsappUrl: updatedOrder.items.length
-        ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsAppText(updatedOrder))}`
-        : undefined
+      whatsappText,
+      whatsappUrl
     });
   } catch (err) {
     console.error(err);
@@ -235,4 +264,3 @@ router.post("/", async (req, res) => {
 });
 
 export default router;
-

@@ -8,6 +8,13 @@ export default function ChatWidget({ presetMessage }) {
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState({ items: [], total: 0 });
   const [whatsappUrl, setWhatsappUrl] = useState("");
+  const [customer, setCustomer] = useState({
+    name: "",
+    phone: "",
+    pickupTime: "",
+    transferred: false
+  });
+  const [receiptFileName, setReceiptFileName] = useState("");
   const [messages, setMessages] = useState([
     { from: "fer", text: "Hola, soy FER. ¿Qué estás buscando hoy?" }
   ]);
@@ -40,7 +47,7 @@ export default function ChatWidget({ presetMessage }) {
       const res = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: messageToSend, order })
+        body: JSON.stringify({ message: messageToSend, order, customer })
       });
       const data = await res.json();
       if (data.order) setOrder(data.order);
@@ -52,6 +59,11 @@ export default function ChatWidget({ presetMessage }) {
       setLoading(false);
     }
   };
+
+  const customerComplete =
+    customer.name.trim().length > 0 &&
+    customer.phone.trim().length > 0 &&
+    customer.pickupTime.trim().length > 0;
 
   return (
     <>
@@ -102,13 +114,79 @@ export default function ChatWidget({ presetMessage }) {
 
           {order.items?.length > 0 && whatsappUrl && (
             <div className="chat-actions">
+              <div className="chat-form">
+                <div className="chat-form-row">
+                  <label>
+                    Nombre y apellido
+                    <input
+                      value={customer.name}
+                      onChange={(e) => setCustomer((c) => ({ ...c, name: e.target.value }))}
+                      placeholder="Ej: Juan Pérez"
+                    />
+                  </label>
+                  <label>
+                    Teléfono
+                    <input
+                      value={customer.phone}
+                      onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
+                      placeholder="Ej: 299 123 4567"
+                    />
+                  </label>
+                </div>
+
+                <label>
+                  Horario aproximado de retiro
+                  <input
+                    value={customer.pickupTime}
+                    onChange={(e) => setCustomer((c) => ({ ...c, pickupTime: e.target.value }))}
+                    placeholder="Ej: hoy 18:30 / mañana 10:00"
+                  />
+                </label>
+
+                <div className="chat-form-row chat-form-inline">
+                  <label className="chat-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={customer.transferred}
+                      onChange={(e) => setCustomer((c) => ({ ...c, transferred: e.target.checked }))}
+                    />
+                    Ya transferí
+                  </label>
+
+                  {customer.transferred && (
+                    <label className="chat-receipt">
+                      Comprobante (opcional)
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => setReceiptFileName(e.target.files?.[0]?.name || "")}
+                      />
+                      {receiptFileName ? <span className="chat-file">{receiptFileName}</span> : null}
+                      <span className="chat-receipt-hint">Se adjunta manualmente en WhatsApp.</span>
+                    </label>
+                  )}
+                </div>
+              </div>
+
               <div className="chat-order-hint">
                 Pedido: {order.items.length} item{order.items.length === 1 ? "" : "s"} • Total aprox: $
                 {order.total.toLocaleString("es-AR")}
               </div>
-              <a className="chat-whatsapp" href={whatsappUrl} target="_blank" rel="noreferrer">
+              <a
+                className={`chat-whatsapp ${customerComplete ? "" : "disabled"}`}
+                href={customerComplete ? whatsappUrl : undefined}
+                onClick={(e) => {
+                  if (!customerComplete) e.preventDefault();
+                }}
+                target="_blank"
+                rel="noreferrer"
+                aria-disabled={!customerComplete}
+              >
                 Enviar por WhatsApp
               </a>
+              {!customerComplete && (
+                <div className="chat-order-hint">Completá tus datos para poder enviar el pedido.</div>
+              )}
             </div>
           )}
         </div>
@@ -116,4 +194,3 @@ export default function ChatWidget({ presetMessage }) {
     </>
   );
 }
-
