@@ -1,7 +1,7 @@
 .order-page {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 18px 14px 120px;
+  padding: 18px 14px calc(140px + env(safe-area-inset-bottom));
 }
 
 .order-layout {
@@ -262,11 +262,22 @@
   }
 
   .order-line-controls {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr auto;
+    align-items: stretch;
   }
 
   .order-line-price {
-    text-align: left;
+    text-align: right;
+  }
+
+  .order-remove {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .order-whatsapp {
+    position: sticky;
+    bottom: calc(10px + env(safe-area-inset-bottom));
   }
 
   .order-layout {

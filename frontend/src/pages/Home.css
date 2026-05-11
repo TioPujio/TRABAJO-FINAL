@@ -205,6 +205,15 @@
   .category-button {
     border-right: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 12px 12px 0 0;
+    justify-content: space-between;
+  }
+
+  .search {
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    width: 100%;
   }
 
   .category-dropdown {
