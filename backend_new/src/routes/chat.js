@@ -149,13 +149,27 @@ function updateOrderFromMessage(message, products, currentOrder) {
     const unit = rawUnit.toLowerCase() === "1kg" ? "kg" : rawUnit;
     const price = product.price || 0;
     const unitPrice = price > 0 ? price : unit.toLowerCase() === "kg" ? product.pricePerKg || 0 : 0;
-    item = {
-      productId: product.id,
-      name: product.name,
-      unit,
-      quantity: 1,
-      total: Math.round(unitPrice)
-    };
+
+    // For kg-priced items, keep everything in grams for consistent editing (1000g = 1kg).
+    if (unit.toLowerCase() === "kg") {
+      const grams = 1000;
+      const pricePerGram = (product.pricePerKg || 0) / 1000;
+      const total = grams * pricePerGram;
+      item = {
+        productId: product.id,
+        name: product.name,
+        grams,
+        total: Math.round(total)
+      };
+    } else {
+      item = {
+        productId: product.id,
+        name: product.name,
+        unit,
+        quantity: 1,
+        total: Math.round(unitPrice)
+      };
+    }
   }
 
   const next = [...order.items];

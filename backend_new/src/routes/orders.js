@@ -64,6 +64,23 @@ async function priceOrderItems(items) {
         : byNormalizedName.get(normalized(it.name));
     const base = product || { pricePerKg: 0, price: 0, unit: it.unit || "kg" };
 
+    const unitRaw = String(it.unit || base.unit || "unidad");
+    const unitLower = unitRaw.toLowerCase();
+
+    // If item is expressed in kg but has `quantity`, convert to grams for consistent UX.
+    if (typeof it.grams !== "number" && typeof it.quantity === "number" && (unitLower === "kg" || unitLower === "1kg")) {
+      const grams = Math.round(Math.max(0, it.quantity) * 1000);
+      const pricePerGram = (base.pricePerKg || 0) / 1000;
+      const total = grams * pricePerGram;
+      return {
+        ...it,
+        unit: "kg",
+        grams,
+        quantity: null,
+        total: Math.round(total)
+      };
+    }
+
     if (typeof it.grams === "number") {
       if (it.grams <= 0) return { ...it, total: 0 };
       const pricePerGram = (base.pricePerKg || 0) / 1000;
@@ -73,8 +90,7 @@ async function priceOrderItems(items) {
 
     const qty = typeof it.quantity === "number" ? Math.max(0, it.quantity) : 1;
 
-    const unit = String(it.unit || base.unit || "unidad");
-    const unitLower = unit.toLowerCase();
+    const unit = unitLower === "1kg" ? "kg" : unitRaw;
 
     // Prefer explicit price; if missing but it's a kg-like unit, fall back to pricePerKg.
     const unitPrice =
