@@ -66,9 +66,10 @@ export default function ChatWidget({ presetMessage }) {
       setRefreshing(true);
       try {
         const priced = await previewTotals(order.items || []);
-        if (priced?.items) {
+        const normalized = normalizePriced(priced);
+        if (normalized.items.length) {
           lastSentRef.current = signature;
-          setOrder(priced);
+          setOrder(normalized);
         }
       } catch {
         // ignore (keeps UX smooth)
@@ -144,12 +145,18 @@ export default function ChatWidget({ presetMessage }) {
     return res.json();
   };
 
+  const normalizePriced = (priced) => ({
+    items: Array.isArray(priced?.items) ? priced.items : [],
+    total: Number.isFinite(Number(priced?.total)) ? Number(priced.total) : 0
+  });
+
   const refreshOrderTotals = async () => {
     if (refreshing) return;
     setRefreshing(true);
     try {
       const priced = await previewTotals(order.items || []);
-      if (priced?.items) setOrder(priced);
+      const normalized = normalizePriced(priced);
+      if (normalized.items.length) setOrder(normalized);
     } catch {
       setMessages((prev) => [...prev, { from: "fer", text: "No pude actualizar los totales. Probá de nuevo." }]);
     } finally {
