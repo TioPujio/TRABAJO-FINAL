@@ -143,10 +143,11 @@
   padding: 10px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   background: #ffffff;
+  flex-wrap: wrap;
 }
 
 .chat-suggest-btn {
-  flex: 1;
+  flex: 1 1 70px;
   border: 0;
   border-radius: 12px;
   padding: 10px 12px;

@@ -322,11 +322,17 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
 
           {suggestProduct && !orderConfirmed && (
             <div className="chat-suggest">
+              <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(250)}>
+                250g
+              </button>
               <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(500)}>
-                Agregar 500g
+                500g
+              </button>
+              <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(750)}>
+                750g
               </button>
               <button type="button" className="chat-suggest-btn" onClick={() => addSuggestedToOrder(1000)}>
-                Agregar 1kg
+                1kg
               </button>
             </div>
           )}
@@ -503,4 +509,3 @@ export default function ChatWidget({ presetMessage, suggestProduct }) {
     </>
   );
 }
-
