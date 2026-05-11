@@ -8,9 +8,9 @@ const orderItemSchema = z.object({
   id: z.number().int().optional(),
   productId: z.number().int().optional(),
   name: z.string().min(1),
-  grams: z.number().int().positive().optional(),
+  grams: z.coerce.number().int().nonnegative().optional(),
   unit: z.string().min(1).optional(),
-  quantity: z.number().int().positive().optional(),
+  quantity: z.coerce.number().int().nonnegative().optional(),
   total: z.number().finite().optional()
 });
 
@@ -26,6 +26,15 @@ async function priceOrderItems(items) {
     new Set(items.map((it) => it.productId).filter((id) => typeof id === "number"))
   );
 
+  const namesWithoutId = Array.from(
+    new Set(
+      items
+        .filter((it) => typeof it.productId !== "number")
+        .map((it) => it.name)
+        .filter(Boolean)
+    )
+  );
+
   const products = productIds.length
     ? await prisma.product.findMany({
         where: { id: { in: productIds } },
@@ -33,19 +42,36 @@ async function priceOrderItems(items) {
       })
     : [];
 
+  const byName = namesWithoutId.length
+    ? await prisma.product.findMany({
+        where: {
+          OR: namesWithoutId.map((name) => ({
+            name: { equals: name, mode: "insensitive" }
+          }))
+        },
+        select: { id: true, name: true, pricePerKg: true, price: true, unit: true }
+      })
+    : [];
+
   const byId = new Map(products.map((p) => [p.id, p]));
+  const normalized = (s) => String(s || "").trim().toLowerCase();
+  const byNormalizedName = new Map(byName.map((p) => [normalized(p.name), p]));
 
   const priced = items.map((it) => {
-    const product = it.productId ? byId.get(it.productId) : undefined;
+    const product =
+      typeof it.productId === "number"
+        ? byId.get(it.productId)
+        : byNormalizedName.get(normalized(it.name));
     const base = product || { pricePerKg: 0, price: 0, unit: it.unit || "kg" };
 
     if (typeof it.grams === "number") {
+      if (it.grams <= 0) return { ...it, total: 0 };
       const pricePerGram = (base.pricePerKg || 0) / 1000;
       const total = it.grams * pricePerGram;
       return { ...it, total: Math.round(total) };
     }
 
-    const qty = typeof it.quantity === "number" ? it.quantity : 1;
+    const qty = typeof it.quantity === "number" ? Math.max(0, it.quantity) : 1;
     const total = (base.price || 0) * qty;
     return {
       ...it,
@@ -128,4 +154,3 @@ router.get("/:id", async (req, res) => {
 });
 
 export default router;
-

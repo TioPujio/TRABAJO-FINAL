@@ -343,7 +343,9 @@ export default function ChatWidget({ presetMessage }) {
                           min="1"
                           value={it.grams}
                           onChange={(e) => {
-                            const grams = Number(e.target.value);
+                            const raw = e.target.value;
+                            if (raw === "") return;
+                            const grams = Math.max(0, Number(raw));
                             setOrder((o) => {
                               const items = [...(o.items || [])];
                               items[idx] = { ...items[idx], grams: Number.isFinite(grams) ? grams : items[idx].grams };
@@ -358,7 +360,9 @@ export default function ChatWidget({ presetMessage }) {
                           min="1"
                           value={it.quantity ?? 1}
                           onChange={(e) => {
-                            const quantity = Number(e.target.value);
+                            const raw = e.target.value;
+                            if (raw === "") return;
+                            const quantity = Math.max(0, Number(raw));
                             setOrder((o) => {
                               const items = [...(o.items || [])];
                               items[idx] = {
