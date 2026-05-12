@@ -1,5 +1,5 @@
 import "./Home.css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { API_URL } from "../services/api";
 import ChatWidget from "../components/ChatWidget";
 import logo from "../assets/logo.svg";
@@ -71,6 +71,7 @@ function formatPrice(product) {
 export default function Home({ products }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("TODAS");
+  const [isPending, startTransition] = useTransition();
   const [chatInput, setChatInput] = useState("");
   const [suggestProduct, setSuggestProduct] = useState(null);
   const [catOpen, setCatOpen] = useState(false);
@@ -132,6 +133,11 @@ export default function Home({ products }) {
     return matchSearch && matchFilter;
   });
 
+  const activeFilterLabel = useMemo(() => {
+    if (!filter || normalizeCategory(filter) === "TODAS") return "Todos los productos";
+    return `Categoría: ${toTitleCase(filter)}`;
+  }, [filter]);
+
   return (
     <div className="container">
       <div className="header">
@@ -163,14 +169,14 @@ export default function Home({ products }) {
                       type="button"
                       key={cat}
                       role="menuitem"
-                      className={`category-item ${filter === cat ? "active" : ""}`}
-                      onClick={() => {
-                        setFilter(cat);
-                        setCatOpen(false);
-                      }}
-                    >
-                      {toTitleCase(cat)}
-                    </button>
+                    className={`category-item ${filter === cat ? "active" : ""}`}
+                    onClick={() => {
+                      startTransition(() => setFilter(cat));
+                      setCatOpen(false);
+                    }}
+                  >
+                    {toTitleCase(cat)}
+                  </button>
                   ))}
                 </div>
               )}
@@ -181,12 +187,22 @@ export default function Home({ products }) {
               type="text"
               placeholder="Buscar productos..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => startTransition(() => setSearch(e.target.value))}
             />
 
 
           </div>
         </div>
+      </div>
+
+      <div className="catalog-status" aria-live="polite">
+        <div className="catalog-filter">{activeFilterLabel}</div>
+        {isPending ? (
+          <div className="catalog-loading" aria-label="Cargando">
+            <span className="spinner" aria-hidden="true" />
+            Cargando…
+          </div>
+        ) : null}
       </div>
 
       <div className="products-grid">
