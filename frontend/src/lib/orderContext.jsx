@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo, useRef, useState } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import { API_URL } from "../services/api";
 
 const OrderContext = createContext(null);
@@ -25,7 +26,7 @@ export function OrderProvider({ children }) {
     customer.phone.trim().length > 0 &&
     customer.pickupTime.trim().length > 0;
 
-  const previewTotals = async (items) => {
+  const previewTotals = useCallback(async (items) => {
     const res = await fetch(`${API_URL}/orders/preview`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -33,14 +34,14 @@ export function OrderProvider({ children }) {
     });
     if (!res.ok) throw new Error("preview_failed");
     return res.json();
-  };
+  }, []);
 
   const normalizePriced = (priced) => ({
     items: Array.isArray(priced?.items) ? priced.items : [],
     total: Number.isFinite(Number(priced?.total)) ? Number(priced.total) : 0
   });
 
-  const refreshOrderTotals = async () => {
+  const refreshOrderTotals = useCallback(async () => {
     if (refreshingRef.current) return;
     refreshingRef.current = true;
     try {
@@ -50,14 +51,14 @@ export function OrderProvider({ children }) {
     } finally {
       refreshingRef.current = false;
     }
-  };
+  }, [order.items, previewTotals]);
 
-  const clearOrder = () => {
+  const clearOrder = useCallback(() => {
     setOrder(EMPTY_ORDER);
     setOrderId(null);
     setCustomer({ name: "", phone: "", pickupTime: "", transferred: false });
     setReceiptFileName("");
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -76,7 +77,7 @@ export function OrderProvider({ children }) {
       refreshOrderTotals,
       clearOrder
     }),
-    [view, order, orderId, customer, receiptFileName, customerComplete]
+    [view, order, orderId, customer, receiptFileName, customerComplete, previewTotals, refreshOrderTotals, clearOrder]
   );
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
@@ -87,4 +88,3 @@ export function useOrder() {
   if (!ctx) throw new Error("useOrder must be used inside <OrderProvider>");
   return ctx;
 }
-

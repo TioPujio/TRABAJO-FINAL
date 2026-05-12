@@ -43,7 +43,7 @@ export default function OrderPage() {
     for (const item of items) {
       const name = item.name || "Producto";
 
-      let qty = "";
+      let qty;
       if (typeof item.grams === "number") {
         qty = `${item.grams}g`;
       } else {
