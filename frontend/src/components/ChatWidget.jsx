@@ -20,6 +20,7 @@ export default function ChatWidget({ presetMessage, suggestProduct, embedded = f
   const [quickGrams, setQuickGrams] = useState("");
   const [quickKg, setQuickKg] = useState("");
   const [suggestedTotal, setSuggestedTotal] = useState(0);
+  const [showSuggestPanel, setShowSuggestPanel] = useState(false);
 
   const [messages, setMessages] = useState([
     { from: "fer", text: "Hola, soy FER. ¿Qué estás buscando hoy?" }
@@ -61,6 +62,7 @@ export default function ChatWidget({ presetMessage, suggestProduct, embedded = f
   useEffect(() => {
     if (!suggestProduct?.id) return;
     setOpen(true);
+    setShowSuggestPanel(true);
     setMessages((prev) => [...prev, { from: "fer", text: describeProduct(suggestProduct) }]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [suggestProduct?.id]);
@@ -77,7 +79,7 @@ export default function ChatWidget({ presetMessage, suggestProduct, embedded = f
     let active = true;
 
     const run = async () => {
-      if (!suggestProduct || suggestedGrams <= 0) {
+      if (!suggestProduct || !showSuggestPanel || suggestedGrams <= 0) {
         setSuggestedTotal(0);
         return;
       }
@@ -102,7 +104,7 @@ export default function ChatWidget({ presetMessage, suggestProduct, embedded = f
     return () => {
       active = false;
     };
-  }, [previewTotals, suggestProduct, suggestedGrams]);
+  }, [previewTotals, suggestProduct, suggestedGrams, showSuggestPanel]);
 
   const addSuggestedFromInputs = async () => {
     if (!suggestProduct || suggestedGrams <= 0) return;
@@ -124,6 +126,7 @@ export default function ChatWidget({ presetMessage, suggestProduct, embedded = f
       });
       setQuickGrams("");
       setQuickKg("");
+      setShowSuggestPanel(false);
       setMessages((prev) => [...prev, { from: "fer", text: "Listo, lo sumé al pedido 🙌" }]);
     } catch {
       setMessages((prev) => [...prev, { from: "fer", text: "No pude agregarlo al pedido. Probá de nuevo." }]);
@@ -136,6 +139,8 @@ export default function ChatWidget({ presetMessage, suggestProduct, embedded = f
     const messageToSend = input;
     setMessages((prev) => [...prev, { from: "user", text: messageToSend }]);
     setInput("");
+    // While the user is chatting, hide the grams/kg panel until they consult/add again.
+    setShowSuggestPanel(false);
     setLoading(true);
 
     try {
@@ -208,7 +213,7 @@ export default function ChatWidget({ presetMessage, suggestProduct, embedded = f
           </div>
 
           <div className="chat-bottom">
-            {suggestProduct && (
+            {suggestProduct && showSuggestPanel && (
               <div className="chat-suggest">
                 <div className="chat-suggest-fields">
                   <label>
