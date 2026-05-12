@@ -14,6 +14,85 @@ function normalize(value) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+function wantsRecipeSuggestions(message) {
+  const msg = normalize(message);
+  return (
+    msg.includes("receta") ||
+    msg.includes("recetas") ||
+    msg.includes("cocinar") ||
+    msg.includes("cocina") ||
+    msg.includes("preparar") ||
+    msg.includes("preparo") ||
+    msg.includes("como hago") ||
+    msg.includes("como preparo") ||
+    msg.includes("ideas")
+  );
+}
+
+function wantsDetailedInfo(message) {
+  const msg = normalize(message);
+  return (
+    msg.includes("detalle") ||
+    msg.includes("detallado") ||
+    msg.includes("descripcion") ||
+    msg.includes("mas info") ||
+    msg.includes("beneficios") ||
+    msg.includes("propiedades") ||
+    msg.includes("nutric") ||
+    msg.includes("ingredientes") ||
+    msg.includes("alergen")
+  );
+}
+
+function wantsGlutenInfo(message) {
+  const msg = normalize(message);
+  return (
+    msg.includes("sin tacc") ||
+    msg.includes("sin gluten") ||
+    msg.includes("celiac") ||
+    msg.includes("celiaco") ||
+    msg.includes("celiaca") ||
+    msg.includes("apto celiac") ||
+    msg.includes("gluten")
+  );
+}
+
+function isSinTaccOrGluten(product) {
+  const cat = normalize(product?.category);
+  return cat === "sin tacc" || cat === "sin gluten";
+}
+
+function productPriceLabel(product) {
+  const unitRaw = String(product?.unit || "kg");
+  const unit = unitRaw.toLowerCase() === "1kg" ? "kg" : unitRaw;
+  const price = Number(product?.price);
+  const perKg = Number(product?.pricePerKg);
+  if (Number.isFinite(price) && price > 0) return `$${formatMoneyARS(price)} / ${unit}`;
+  if (Number.isFinite(perKg) && perKg > 0) return `$${formatMoneyARS(perKg)} / kg`;
+  return "";
+}
+
+function detailedProductText(product) {
+  const name = product?.name || "Producto";
+  const cat = product?.category ? String(product.category) : "";
+  const priceLabel = productPriceLabel(product);
+
+  const catNorm = normalize(cat);
+  let uses = "Ideal para sumar al día a día.";
+  if (catNorm.includes("frutos")) uses = "Usos: snacks, granolas, mix y repostería.";
+  else if (catNorm.includes("condimento") || catNorm.includes("especia")) uses = "Usos: carnes, salsas, guisos y adobos.";
+  else if (catNorm.includes("harina")) uses = "Usos: panificados, rebozados y repostería.";
+  else if (catNorm.includes("legumbre")) uses = "Usos: guisos, ensaladas y sopas.";
+  else if (catNorm.includes("semilla")) uses = "Usos: ensaladas, yogur, panes y mix.";
+  else if (catNorm.includes("limpieza")) uses = "Usos: limpieza general (según indicación del envase).";
+
+  const glutenNote = isSinTaccOrGluten(product)
+    ? "Aclaración: figura en categoría sin TACC/sin gluten. Igual, para celiaquía siempre verificá etiqueta y trazas del envase."
+    : "Aclaración: si necesitás sin TACC/sin gluten, avisame y te paso opciones aptas (según categoría/etiqueta).";
+
+  return `Sobre ${name}:\n- Categoría: ${cat || "—"}\n${priceLabel ? `- Precio: ${priceLabel}\n` : ""}- ${uses}\n- Conservación: guardar en lugar fresco y seco, bien cerrado.\n- ${glutenNote}`;
+}
+
 function calcularPrecio(mensaje, productos) {
   const regex = /(\d+)\s?(g|kg)/i;
   const match = mensaje.match(regex);
@@ -254,21 +333,73 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const productContext = productos.map((p) => `${p.name} - $${p.pricePerKg}/kg`).join("\n");
+    // Gluten / Sin TACC info (deterministic)
+    if (wantsGlutenInfo(message)) {
+      const found = findProductInMessage(message, productos);
+      const sinTacc = productos.filter((p) => normalize(p.category) === "sin tacc").slice(0, 12);
+      const sinGluten = productos.filter((p) => normalize(p.category) === "sin gluten").slice(0, 12);
+
+      const listBlock = (title, items) =>
+        items.length ? `\n${title}:\n${items.map((p) => `- ${p.name}`).join("\n")}` : "";
+
+      const about = found ? `\n\n${detailedProductText(found)}` : "";
+
+      return res.json({
+        reply:
+          `Opciones sin TACC / sin gluten:\n` +
+          `Aclaración: siempre verificá etiqueta y trazas del envase (sobre todo para celiaquía).` +
+          listBlock("Sin TACC", sinTacc) +
+          listBlock("Sin gluten", sinGluten) +
+          about +
+          `\n\nSi querés, decime qué producto y cantidad (g o kg) y te lo agrego al pedido.`,
+        order: updatedOrder,
+        whatsappText,
+        whatsappUrl
+      });
+    }
+
+    // Detailed product description on request (deterministic)
+    if (wantsDetailedInfo(message)) {
+      const found = findProductInMessage(message, productos);
+      if (found) {
+        return res.json({
+          reply: `${detailedProductText(found)}\n\n¿Querés que lo agregue al pedido? Decime la cantidad (ej: 250g o 0,5kg).`,
+          order: updatedOrder,
+          whatsappText,
+          whatsappUrl
+        });
+      }
+    }
+
+    const productContext = productos
+      .map((p) => {
+        const label = productPriceLabel(p);
+        return label ? `${p.name} - ${label}` : `${p.name}`;
+      })
+      .join("\n");
     const prompt =
       `Sos FER, vendedor de almacén.\n\nProductos:\n${productContext}\n\n` +
       `Tu objetivo: ayudar a armar un pedido para retirar en el local.\n` +
       `Si el usuario quiere comprar, pedile cantidades (en g o kg).\n` +
+      `Si el usuario pide recetas/ideas para cocinar, sugerí 2-3 recetas cortas usando productos del listado y preguntá si quiere sumar algo al pedido.\n` +
+      `Si el usuario pide sin TACC/sin gluten, respondé con opciones y recordá verificar etiqueta y trazas del envase.\n` +
+      `Si el usuario pide más detalle de un producto, explicá usos, conservación y advertencias.\n` +
       `Una vez armado el pedido, pedile datos obligatorios: nombre, teléfono y horario aproximado de retiro.\n` +
       `Si el usuario dice que ya transfirió, pedile que adjunte el comprobante en WhatsApp.\n` +
       `Mantené respuestas cortas y claras.`;
 
+    const systemMessages = [{ role: "system", content: prompt }];
+    if (wantsRecipeSuggestions(message)) {
+      systemMessages.push({
+        role: "system",
+        content:
+          "El usuario quiere recetas. Respondé con 2-3 ideas: ingredientes (cantidades aproximadas) y pasos breves. Cerrá preguntando si quiere sumar algo al pedido."
+      });
+    }
+
     const response = await openai.chat.completions.create({
       model: "gpt-4.1",
-      messages: [
-        { role: "system", content: prompt },
-        { role: "user", content: message }
-      ]
+      messages: [...systemMessages, { role: "user", content: message }]
     });
 
     const suffix = updatedOrder.items.length ? `\n\n${formatOrderSummary(updatedOrder)}` : "";
