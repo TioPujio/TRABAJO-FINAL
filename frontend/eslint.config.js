@@ -22,4 +22,16 @@ export default defineConfig([
       'react-hooks/set-state-in-effect': 'off',
     },
   },
+  // Node-only files (Playwright config + tests) need Node globals (e.g. `process`).
+  {
+    files: [
+      'playwright.config.js',
+      'tests/**/*.{js,jsx}',
+      '**/*.spec.{js,jsx}',
+      '**/*.test.{js,jsx}',
+    ],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])
