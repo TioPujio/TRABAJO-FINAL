@@ -1,20 +1,49 @@
-<<<<<<< HEAD
-# TRABAJO-FINAL
-Este es un proyecto de una app web orientada a gestionar mediante IA para enfocar la experiencia de usuario hacia la navegacion asistida.
-=======
-# Proyecto Python
+# TRABAJO-FINAL (El Viejo Almacén Todo Suelto)
 
-Base inicial para aprender Python con VS Code.
+Monorepo con:
+- `backend_new/`: Node + Express + Prisma + PostgreSQL (Neon/local)
+- `frontend/`: React + Vite
 
-## Primeros pasos
+## Desarrollo (local)
 
-1. Abre esta carpeta en VS Code.
-2. Activa el entorno virtual.
-3. Ejecuta `python src/main.py`.
+En 2 terminales:
 
-## Estructura
+```powershell
+cd backend_new
+npm install
+npm run dev
+```
 
-- `src/main.py`: punto de entrada del proyecto.
-- `requirements.txt`: dependencias del proyecto.
-- `.vscode/`: configuracion recomendada para VS Code.
->>>>>>> 6309ee8 (init proyecto)
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend: `http://localhost:5173`  
+Backend: `http://localhost:3000`
+
+## Tests automatizados
+
+### Backend (Jest + Supertest)
+
+```powershell
+cd backend_new
+npm install
+npm test
+```
+
+Los tests están en `backend_new/tests/`.
+
+### E2E (Playwright)
+
+```powershell
+cd frontend
+npm install
+npx playwright install
+npm run test:e2e
+```
+
+Los tests están en `frontend/tests/e2e/`.
+
+Nota: los tests E2E mockean `/products` y `/chat` para ser deterministas (no dependen de DB/OpenAI).

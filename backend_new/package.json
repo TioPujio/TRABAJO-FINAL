@@ -16,7 +16,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "start": "node src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +32,8 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "prisma": "^7.8.0"
+    "jest": "^30.0.0",
+    "prisma": "^7.8.0",
+    "supertest": "^7.1.1"
   }
 }
