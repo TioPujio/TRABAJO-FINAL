@@ -27,12 +27,6 @@ export default defineConfig({
   reporter: [['list'], ['html', { outputFolder: './pw-playwright-report', open: 'never' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL:
-      process.env.PLAYWRIGHT_BASE_URL ||
-      process.env.E2E_BASE_URL ||
-      'https://el-viejo-almacen-todo-suelto.vercel.app',
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
@@ -41,17 +35,35 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL:
+          process.env.PLAYWRIGHT_BASE_URL ||
+          process.env.E2E_BASE_URL ||
+          'https://el-viejo-almacen-todo-suelto.vercel.app',
+      },
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        baseURL:
+          process.env.PLAYWRIGHT_BASE_URL ||
+          process.env.E2E_BASE_URL ||
+          'https://el-viejo-almacen-todo-suelto.vercel.app',
+      },
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: {
+        ...devices['Desktop Safari'],
+        baseURL:
+          process.env.PLAYWRIGHT_BASE_URL ||
+          process.env.E2E_BASE_URL ||
+          'https://el-viejo-almacen-todo-suelto.vercel.app',
+      },
     },
 
     /* Test against mobile viewports. */
