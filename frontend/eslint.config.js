@@ -4,6 +4,11 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
+const toEslintGlobals = (globalsMap) =>
+  Object.fromEntries(
+    Object.entries(globalsMap).map(([name, writable]) => [name, writable ? 'writable' : 'readonly']),
+  )
+
 export default defineConfig([
   globalIgnores(['dist', 'node_modules', '.vite', 'coverage', 'playwright-report', 'test-results']),
   {
@@ -31,7 +36,7 @@ export default defineConfig([
       '**/*.test.{js,jsx}',
     ],
     languageOptions: {
-      globals: globals.node,
+      globals: toEslintGlobals(globals.node),
     },
   },
 ])
